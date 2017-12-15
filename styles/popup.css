@@ -5,17 +5,19 @@ body {
 	min-height: 500px;
 }
 
-div {
-	display: flex;
-	flex-direction: column;
-}
-
 .header {
+	display: flex;
+	flex-direction: row;
 	border-bottom: 1px solid black;
 }
 
 .title {
 	font-size: 200%;
+}
+
+.main div {
+	display: flex;
+	flex-direction: column;
 }
 
 a:focus {

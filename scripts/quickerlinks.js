@@ -31,8 +31,8 @@ function createDivs() {
 function loadCourses() {
     showDiv('courses');
     $('#back').hide();
-    // $('#title').html('Home');
-    // $('#title').attr('href', `${endpoint}/d2l/home`);
+    $('#title').html('Your Courses');
+    $('#title').attr('href', `${endpoint}/d2l/home`);
     $.ajax({
         url: `${endpoint}/d2l/api/lp/${lpVersion}/enrollments/myenrollments/?OrgUnitTypeId=3&sortBy=-PinDate`,
         dataType: "json",

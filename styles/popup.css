@@ -10,10 +10,6 @@ div {
 	flex-direction: column;
 }
 
-button {
-	margin: 10px 15px 10px 15px;
-}
-
 .header {
 	border-bottom: 1px solid black;
 }

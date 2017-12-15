@@ -140,8 +140,26 @@ function loadAnnouncements(courseInfo) {
     });
 }
 
-function loadGrades() {
+function loadGrades(courseInfo) {
+    showDiv('grades');
+    $('#back').html("Back");
+    $('#title').html(courseInfo.courseName);
 
+    $.ajax({
+        url: `${endpoint}/d2l/api/le/${leVersion}/${courseInfo.courseId}/grades/values/myGradeValues/`,
+        dataType: "json",
+        success: function(grades) {
+            for (let i=0; i<grades.length; i++) {
+                $('#grades').append(`<h4>${grades[i].GradeObjectName}: ${grades[i].DisplayedGrade}</h4>`);
+            }
+            if (grades.length === 0) {
+                $('#grades').html('There are no grades in this course.');
+            }
+        },
+        error: function (e) {
+            console.log("Error: Not a valid URL.");
+        }
+    });
 }
 
 function loadTopics(courseInfo, moduleInfo) {

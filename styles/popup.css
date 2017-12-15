@@ -3,7 +3,6 @@ body {
 	font-size: 13px;
 	width: 350px;
 	min-height: 500px;
-	text-align: center;
 }
 
 div {
@@ -13,6 +12,10 @@ div {
 
 button {
 	margin: 10px 15px 10px 15px;
+}
+
+.header {
+	border-bottom: 1px solid black;
 }
 
 .title {

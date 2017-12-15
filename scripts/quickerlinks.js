@@ -2,7 +2,7 @@
 let endpoint = 'https://d2llabs.desire2learn.com';
 // let endpoint = 'https://learn.uwaterloo.ca';
 let leVersion = '1.24';
-let lpVersion = '1.18';
+let lpVersion = '1.20';
 let divs = ['courses', 'resources', 'modules', 'topics', 'announcements', 'grades'];
 let resources = ['Content', 'Announcements', 'Grades'];
 let resourceFns = [loadModules, loadAnnouncements, loadGrades];
@@ -30,9 +30,9 @@ function createDivs() {
 
 function loadCourses() {
     showDiv('courses');
-    $('#back').html("Refresh");
-    $('#title').html('Home');
-    $('#title').attr('href', `${endpoint}/d2l/home`);
+    $('#back').hide();
+    // $('#title').html('Home');
+    // $('#title').attr('href', `${endpoint}/d2l/home`);
     $.ajax({
         url: `${endpoint}/d2l/api/lp/${lpVersion}/enrollments/myenrollments/?OrgUnitTypeId=3&sortBy=-PinDate`,
         dataType: "json",
@@ -62,7 +62,7 @@ function loadCourses() {
             }
         },
         error: function (e) {
-            $('#courses').html(`<a href="https://d2llabs.desire2learn.com/d2l/login" target="_blank">Could not login. Click here to log in.</a>`);
+            $('#courses').html(`<a href="${endpoint}/d2l/login" target="_blank">Could not login. Click here to log in.</a>`);
             console.log("Error: Not a valid URL.");
         }
     });
@@ -70,7 +70,7 @@ function loadCourses() {
 
 function loadResources(courseInfo) {
     showDiv('resources');
-    $('#back').html("Back");
+    $('#back').show();
     $('#title').html(courseInfo.courseName);
     $('#title').attr('href', `${endpoint}/d2l/home/${courseInfo.courseId}`);
     for (let i=0; i<resources.length; i++) {
@@ -88,7 +88,7 @@ function loadResources(courseInfo) {
 
 function loadModules(courseInfo) {
     showDiv('modules');
-    $('#back').html("Back");
+    $('#back').show();
     $('#title').html(courseInfo.courseName);
     $('#title').attr('href', `${endpoint}/d2l/le/content/${courseInfo.courseId}/Home`);
     $.ajax({
@@ -121,7 +121,7 @@ function loadModules(courseInfo) {
 
 function loadAnnouncements(courseInfo) {
     showDiv('announcements');
-    $('#back').html("Back");
+    $('#back').show();
     $('#title').html(courseInfo.courseName);
     $('#title').attr('href', `${endpoint}/d2l/lms/news/main.d2l?ou=${courseInfo.courseId}`);
     $.ajax({
@@ -144,7 +144,7 @@ function loadAnnouncements(courseInfo) {
 
 function loadGrades(courseInfo) {
     showDiv('grades');
-    $('#back').html("Back");
+    $('#back').show();
     $('#title').html(courseInfo.courseName);
     $.ajax({
         url: `${endpoint}/d2l/api/le/${leVersion}/${courseInfo.courseId}/grades/values/myGradeValues/`,
@@ -165,7 +165,7 @@ function loadGrades(courseInfo) {
 
 function loadTopics(courseInfo, moduleInfo) {
     showDiv('topics');
-    $('#back').html("Back");
+    $('#back').show();
     $('#title').html(moduleInfo.Title);
     $('#title').attr('href', `${endpoint}/d2l/le/content/${courseInfo.courseId}/Home?itemIdentifier=D2L.LE.Content.ContentObject.ModuleCO-${moduleInfo.ModuleId}`);
     let topics = moduleInfo.Topics;

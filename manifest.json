@@ -1,9 +1,9 @@
 {
 	"manifest_version": 2,
-	"name": "Quickerlinks",
-	"short_name": "Quickerlinks",
+	"name": "QuickerLinks",
+	"short_name": "QuickerLinks",
 	"version": "0.0.0.1",
-	"description": "Quicker links for Brightspace.",
+	"description": "An experimental chrome extension built by D2L Labs. This exension is not supported and is provided as-is, and without warranty.",
 	"browser_action": {
 		"default_popup": "popup.html"
 	},

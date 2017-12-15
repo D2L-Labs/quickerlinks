@@ -3,9 +3,9 @@ let endpoint = 'https://d2llabs.desire2learn.com';
 // let endpoint = 'https://learn.uwaterloo.ca';
 let leVersion = '1.24';
 let lpVersion = '1.18';
-let divs = ['courses', 'resources', 'modules', 'topics'];
+let divs = ['courses', 'resources', 'modules', 'topics', 'announcements', 'grades'];
 let resources = ['Content', 'Announcements', 'Grades'];
-let resourceFns = [loadContent, loadAnnouncements, loadGrades];
+let resourceFns = [loadModules, loadAnnouncements, loadGrades];
 //currentState 0-courses, 1-resources, 2-modules, 3-topics
 let currentState = 0;
 let courseInfo = {};
@@ -13,6 +13,7 @@ let functions = [];
 let pinnedOnly = true;
 
 $(document).ready(function() {
+    createDivs();
     loadCourses();
     $('button').click(function() {
         currentState = Math.max(0, currentState-1);
@@ -20,6 +21,12 @@ $(document).ready(function() {
         functions.pop();
     });
 });
+
+function createDivs() {
+    for (let i=0; i<divs.length; i++) {
+        $('#main').append(`<div id="${divs[i]}"></div>`);
+    }
+}
 
 function loadCourses() {
     showDiv('courses');
@@ -77,7 +84,7 @@ function loadResources(courseInfo) {
     });
 }
 
-function loadContent(courseInfo) {
+function loadModules(courseInfo) {
     showDiv('modules');
     $('#back').html("Back");
     $('#title').html(courseInfo.courseName);
@@ -98,7 +105,7 @@ function loadContent(courseInfo) {
                     let moduleId = $(this).attr('id');
                     if (!moduleId.startsWith("back")) {
                         loadTopics(courseInfo, modules[moduleId]);
-                        functions.push(loadContent);
+                        functions.push(loadModules);
                         currentState++;
                     }
                 });
@@ -111,7 +118,10 @@ function loadContent(courseInfo) {
 }
 
 function loadAnnouncements() {
-
+    showDiv('announcements');
+    $('#back').html("Back");
+    $('#title').html('<p>Announcements for:</p>' + courseInfo.courseName);
+    $('#title').attr('href', `${endpoint}/d2l/le/content/${courseInfo.courseId}/Home`);
 }
 
 function loadGrades() {

@@ -1,24 +1,31 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
-		<meta charset="UTF-8">
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
 		<script src="scripts/jquery-3.2.1.min.js"></script>
 		<script src="scripts/popper.js"></script>
   		<script src="scripts/bootstrap.min.js"></script>
-		<link rel="stylesheet" href="styles/popup.css">
+		<script src="scripts/quickerlinks.js"></script>
 		<link rel="stylesheet" href="styles/bootstrap.min.css">
+		<link rel="stylesheet" href="styles/popup.css">
 	</head>
 	<body>
-		<div>
+		<div class="container-fluid">
 			<div class="header">
-				<button id="back">&lt;</button>
-				<h2 class="title">Quickerlinks</h2>
+				<div>QuickerLinks</div>
 			</div>
+			<ol class="breadcrumb">
+  				<li><a href="#">Home</a></li>
+  				<li><a href="#">Library</a></li>
+  				<li class="active">Data</li>
+			</ol>
 			<div class="main" id="main">
 				<a class="title" id="title" target="_blank"></a>
 			</div>
 		</div>
-
-		<script src="scripts/quickerlinks.js"></script>
 	</body>
+
 </html>

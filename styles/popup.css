@@ -1,18 +1,11 @@
 body {
-	font-family: Arial, Helvetica, Sans-serif;
-	font-size: 13px;
-	width: 350px;
+	/*font-size: large;*/
+	width: 450px;
 	min-height: 500px;
 }
 
 .header {
-	display: flex;
-	flex-direction: row;
 	border-bottom: 1px solid black;
-}
-
-.title {
-	font-size: 200%;
 }
 
 .main div {

@@ -38,12 +38,14 @@ function loadCourses() {
         dataType: "json",
         success: function(data) {
             let courses = data.Items;
+            let enrolled = false;
             for (let i=0; i<courses.length; i++) {
                 if (!pinnedOnly || courses[i].PinDate) {
+                    enrolled = true;
                     $('#courses').append(`<button id="${courses[i].OrgUnit.Id}">${courses[i].OrgUnit.Name}</button>`);
                 }
             }
-            if (courses.length === 0) {
+            if (!enrolled) {
                 $('#courses').html('You are not enrolled in any courses.');
             }
             else {

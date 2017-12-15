@@ -2,7 +2,7 @@ body {
 	font-family: Arial, Helvetica, Sans-serif;
 	font-size: 13px;
 	width: 350px;
-	min-height: 400px;
+	min-height: 500px;
 	text-align: center;
 }
 
@@ -11,6 +11,14 @@ div {
 	flex-direction: column;
 }
 
+button {
+	margin: 10px 15px 10px 15px;
+}
+
 .title {
 	font-size: 200%;
+}
+
+a:focus {
+	outline: none;
 }

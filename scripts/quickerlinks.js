@@ -3,11 +3,13 @@ let endpoint = 'https://d2llabs.desire2learn.com';
 // let endpoint = 'https://learn.uwaterloo.ca';
 let leVersion = '1.24';
 let lpVersion = '1.18';
-let divs = ['courses', 'modules', 'topics'];
-//currentState 0-courses, 1-modules 2-topics
+let divs = ['courses', 'resources', 'modules', 'topics'];
+let resources = ['Content', 'Announcements', 'Grades'];
+let resourceFns = [loadContent, loadAnnouncements, loadGrades];
+//currentState 0-courses, 1-resources, 2-modules, 3-topics
 let currentState = 0;
 let courseInfo = {};
-let functions = [loadCourses, loadModules];
+let functions = [];
 let pinnedOnly = true;
 
 $(document).ready(function() {
@@ -15,14 +17,17 @@ $(document).ready(function() {
     $('button').click(function() {
         currentState = Math.max(0, currentState-1);
         functions[currentState](courseInfo);
+        functions.pop();
     });
 });
 
 function loadCourses() {
     showDiv('courses');
-    $('#back').hide();
+    $('#back').html("Refresh");
+    $('#title').html('Home');
+    $('#title').attr('href', `${endpoint}/d2l/home`);
     $.ajax({
-        url: `${endpoint}/d2l/api/lp/${lpVersion}/enrollments/myenrollments/?OrgUnitTypeId=1,3&sortBy=-PinDate`,
+        url: `${endpoint}/d2l/api/lp/${lpVersion}/enrollments/myenrollments/?OrgUnitTypeId=3&sortBy=-PinDate`,
         dataType: "json",
         success: function(data) {
             let courses = data.Items;
@@ -30,20 +35,22 @@ function loadCourses() {
                 if (!pinnedOnly || courses[i].PinDate) {
                     $('#courses').append(`<button id="${courses[i].OrgUnit.Id}">${courses[i].OrgUnit.Name}</button>`);
                 }
-                if (courses[i].OrgUnit.Type.Id === 1) {
-                    $('#title').html('Home');
-                    $('#title').attr('href', courses[i].OrgUnit.HomeUrl);
-                }
             }
-            $('button').click(function() {
-                let courseId = $(this).attr('id');
-                if (!courseId.startsWith("back")) {
-                    let courseName = $(this).html();
-                    courseInfo = {courseId, courseName};
-                    loadModules(courseInfo);
-                    currentState++;
-                }
-            });
+            if (courses.length === 0) {
+                $('#courses').html('You are not enrolled in any courses.');
+            }
+            else {
+                $('button').click(function() {
+                    let courseId = $(this).attr('id');
+                    if (!courseId.startsWith("back")) {
+                        let courseName = $(this).html();
+                        courseInfo = {courseId, courseName};
+                        loadResources(courseInfo);
+                        functions.push(loadCourses);
+                        currentState++;
+                    }
+                });
+            }
         },
         error: function (e) {
             $('#courses').html(`<a href="https://d2llabs.desire2learn.com/d2l/login" target="_blank">Could not login. Click here to log in.</a>`);
@@ -52,9 +59,27 @@ function loadCourses() {
     });
 }
 
-function loadModules(courseInfo) {
+function loadResources(courseInfo) {
+    showDiv('resources');
+    $('#back').html("Back");
+    $('#title').html(courseInfo.courseName);
+    $('#title').attr('href', `${endpoint}/d2l/home/${courseInfo.courseId}`);
+    for (let i=0; i<resources.length; i++) {
+        $('#resources').append(`<button id="${i}">${resources[i]}</button>`);
+    }
+    $('button').click(function() {
+        let resourceId = $(this).attr('id');
+        if (!resourceId.startsWith("back")) {
+            resourceFns[resourceId](courseInfo);
+            functions.push(loadResources);
+            currentState++;
+        }
+    });
+}
+
+function loadContent(courseInfo) {
     showDiv('modules');
-    $('#back').show();
+    $('#back').html("Back");
     $('#title').html(courseInfo.courseName);
     $('#title').attr('href', `${endpoint}/d2l/le/content/${courseInfo.courseId}/Home`);
     $.ajax({
@@ -65,13 +90,19 @@ function loadModules(courseInfo) {
             for (let i=0; i<modules.length; i++) {
                 $('#modules').append(`<button id="${i}">${modules[i].Title}</button>`);
             }
-            $('button').click(function() {
-                let moduleId = $(this).attr('id');
-                if (!moduleId.startsWith("back")) {
-                    loadTopics(courseInfo.courseId, modules[moduleId]);
-                    currentState++;
-                }
-            });
+            if (modules.length === 0) {
+                $('#modules').html('There are no modules in this course.');
+            }
+            else {
+                $('button').click(function() {
+                    let moduleId = $(this).attr('id');
+                    if (!moduleId.startsWith("back")) {
+                        loadTopics(courseInfo, modules[moduleId]);
+                        functions.push(loadContent);
+                        currentState++;
+                    }
+                });
+            }
         },
         error: function (e) {
             console.log("Error: Not a valid URL.");
@@ -79,11 +110,19 @@ function loadModules(courseInfo) {
     });
 }
 
-function loadTopics(courseId, moduleInfo) {
+function loadAnnouncements() {
+
+}
+
+function loadGrades() {
+
+}
+
+function loadTopics(courseInfo, moduleInfo) {
     showDiv('topics');
-    $('#back').show();
-    $('#title').html(`<h3>${moduleInfo.Title}</h3>`);
-    $('#title').attr('href', `${endpoint}/d2l/le/content/${courseId}/Home?itemIdentifier=D2L.LE.Content.ContentObject.ModuleCO-${moduleInfo.ModuleId}`);
+    $('#back').html("Back");
+    $('#title').html(moduleInfo.Title);
+    $('#title').attr('href', `${endpoint}/d2l/le/content/${courseInfo.courseId}/Home?itemIdentifier=D2L.LE.Content.ContentObject.ModuleCO-${moduleInfo.ModuleId}`);
     let topics = moduleInfo.Topics;
     for (let i=0; i<topics.length; i++) {
         let url = topics[i].Url;
@@ -91,6 +130,9 @@ function loadTopics(courseId, moduleInfo) {
             url = `${endpoint}${url}`;
         }
         $('#topics').append(`<a href="${url}" target="_blank">${moduleInfo.Topics[i].Title}</button>`);
+    }
+    if (topics.length === 0) {
+        $('#topics').html('There are no topics in this module.');
     }
 }
 

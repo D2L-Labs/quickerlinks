@@ -120,7 +120,7 @@ function loadModules(courseInfo) {
 function loadAnnouncements(courseInfo) {
     showDiv('announcements');
     $('#back').html("Back");
-    $('#title').html('<p>Announcements for:</p>' + courseInfo.courseName);
+    $('#title').html(courseInfo.courseName);
     $('#title').attr('href', `${endpoint}/d2l/lms/news/main.d2l?ou=${courseInfo.courseId}`);
     $.ajax({
         url: `${endpoint}/d2l/api/le/${leVersion}/${courseInfo.courseId}/news/`,
@@ -144,7 +144,6 @@ function loadGrades(courseInfo) {
     showDiv('grades');
     $('#back').html("Back");
     $('#title').html(courseInfo.courseName);
-
     $.ajax({
         url: `${endpoint}/d2l/api/le/${leVersion}/${courseInfo.courseId}/grades/values/myGradeValues/`,
         dataType: "json",

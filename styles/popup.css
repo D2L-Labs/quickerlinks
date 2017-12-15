@@ -11,10 +11,6 @@ div {
 	flex-direction: column;
 }
 
-button {
-	margin: 10px 15px 10px 15px;
-}
-
 .title {
 	font-size: 200%;
 }

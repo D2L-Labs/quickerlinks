@@ -1,0 +1,16 @@
+body {
+	font-family: Arial, Helvetica, Sans-serif;
+	font-size: 13px;
+	width: 350px;
+	min-height: 400px;
+	text-align: center;
+}
+
+div {
+	display: flex;
+	flex-direction: column;
+}
+
+.title {
+	font-size: 200%;
+}

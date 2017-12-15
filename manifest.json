@@ -1,0 +1,20 @@
+{
+	"manifest_version": 2,
+	"name": "Quickerlinks",
+	"short_name": "Quickerlinks",
+	"version": "0.0.0.1",
+	"description": "Quicker links for Brightspace.",
+	"browser_action": {
+		"default_popup": "popup.html"
+	},
+	"permissions": [
+   		"activeTab",
+   		"tabs",
+   		"http://*/*",
+   		"https://*/*"
+   	],
+   	"background": {
+    	"scripts": ["scripts/quickerlinks.js"],
+    	"persistent": false
+  	}
+}

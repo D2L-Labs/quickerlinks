@@ -117,11 +117,27 @@ function loadModules(courseInfo) {
     });
 }
 
-function loadAnnouncements() {
+function loadAnnouncements(courseInfo) {
     showDiv('announcements');
     $('#back').html("Back");
     $('#title').html('<p>Announcements for:</p>' + courseInfo.courseName);
-    $('#title').attr('href', `${endpoint}/d2l/le/content/${courseInfo.courseId}/Home`);
+    $('#title').attr('href', `${endpoint}/d2l/lms/news/main.d2l?ou=${courseInfo.courseId}`);
+    $.ajax({
+        url: `${endpoint}/d2l/api/le/${leVersion}/${courseInfo.courseId}/news/`,
+        dataType: "json",
+        success: function(announcements) {
+            for (let i=0; i<announcements.length; i++) {
+                let url = `${endpoint}/d2l/le/news/${courseInfo.courseId}/${announcements[i].Id}/view`
+                $('#announcements').append(`<a href="${url}" target="_blank">${announcements[i].Title}</a>`);
+            }
+            if (announcements.length === 0) {
+                $('#announcements').html('There are no announcements in this course.');
+            }
+        },
+        error: function (e) {
+            console.log("Error: Not a valid URL.");
+        }
+    });
 }
 
 function loadGrades() {

@@ -8,11 +8,6 @@ body {
 	border-bottom: 1px solid black;
 }
 
-.main div {
-	display: flex;
-	flex-direction: column;
-}
-
 a:focus {
 	outline: none;
 }

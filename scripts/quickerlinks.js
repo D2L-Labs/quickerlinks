@@ -36,7 +36,6 @@ function createDivs() {
 
 function loadCourses() {
     showDiv('courses');
-    $('#back').hide();
     $('#title').html('Your Courses');
     $('#title').attr('href', `${endpoint}/d2l/home`);
     $.ajax({
@@ -48,7 +47,7 @@ function loadCourses() {
 
             // Two courses take up one row.
             for (var i = 0; i < numRows; i++) {
-                $("#coursesDisplay").append("<div class=\"row\"></div>")
+                $("#courses").append("<div class=\"row\"></div>")
             }
             $('#breadcrumb').append('<li id="bc0">Courses</li>');
             // Appends to cols of width 6 to every row.
@@ -68,10 +67,18 @@ function loadCourses() {
                     // Set to default
                     image = "https://d2q79iu7y748jz.cloudfront.net/s/_logo/2b6d922805d2214befee400b8bb5de7f.png"
                 }
-                $(this).append(`<img src="${image}" height="100" width="100"/>`)
+                $(this).append(`<img src="${image}" height="140" width="140"/>`)
                 $(this).append(`<div class="card-block">${title}</div>`)
-                $(this).append(`<a href="#" id="${id}"class="btn btn-primary">Enter course</a>`)
+                $(this).append(`<button href="#" id="${id}"class="btn btn-primary">Enter course</button>`)
             })
+            $('button').click(function() {
+               let courseId = $(this).attr('id');
+               let courseName = $(this).html();
+               courseInfo = {courseId, courseName};
+               loadResources(courseInfo);
+               functions.push(loadCourses);
+               currentState++;
+           });
         },
         error: function (e) {
             $('#courses').html(`<a href="${endpoint}/d2l/login" target="_blank">Could not login. Click here to log in.</a>`);
@@ -82,7 +89,6 @@ function loadCourses() {
 
 function loadResources(courseInfo) {
     showDiv('resources');
-    $('#back').show();
     $('#title').html(courseInfo.courseName);
     $('#title').attr('href', `${endpoint}/d2l/home/${courseInfo.courseId}`);
     for (let i=0; i<resources.length; i++) {
@@ -90,11 +96,9 @@ function loadResources(courseInfo) {
     }
     $('button').click(function() {
         let resourceId = $(this).attr('id');
-        if (!resourceId.startsWith("back")) {
-            resourceFns[resourceId](courseInfo);
-            functions.push(loadResources);
-            currentState++;
-        }
+        resourceFns[resourceId](courseInfo);
+        functions.push(loadResources);
+        currentState++;
     });
     $('#breadcrumb').append('<li id="bc1">Resources</li>');
     $('#bc0').html(`<a>${$('#bc0').html()}</a>`);
@@ -102,7 +106,6 @@ function loadResources(courseInfo) {
 
 function loadModules(courseInfo) {
     showDiv('modules');
-    $('#back').show();
     $('#title').html(courseInfo.courseName);
     $('#title').attr('href', `${endpoint}/d2l/le/content/${courseInfo.courseId}/Home`);
     $.ajax({
@@ -119,11 +122,9 @@ function loadModules(courseInfo) {
             else {
                 $('button').click(function() {
                     let moduleId = $(this).attr('id');
-                    if (!moduleId.startsWith("back")) {
-                        loadTopics(courseInfo, modules[moduleId]);
-                        functions.push(loadModules);
-                        currentState++;
-                    }
+                    loadTopics(courseInfo, modules[moduleId]);
+                    functions.push(loadModules);
+                    currentState++;
                 });
             }
             $('#breadcrumb').append('<li id="bc2">Modules</li>');
@@ -137,7 +138,6 @@ function loadModules(courseInfo) {
 
 function loadAnnouncements(courseInfo) {
     showDiv('announcements');
-    $('#back').show();
     $('#title').html(courseInfo.courseName);
     $('#title').attr('href', `${endpoint}/d2l/lms/news/main.d2l?ou=${courseInfo.courseId}`);
     $.ajax({
@@ -162,7 +162,6 @@ function loadAnnouncements(courseInfo) {
 
 function loadGrades(courseInfo) {
     showDiv('grades');
-    $('#back').show();
     $('#title').html(courseInfo.courseName);
     $.ajax({
         url: `${endpoint}/d2l/api/le/${leVersion}/${courseInfo.courseId}/grades/values/myGradeValues/`,
@@ -185,7 +184,6 @@ function loadGrades(courseInfo) {
 
 function loadTopics(courseInfo, moduleInfo) {
     showDiv('topics');
-    $('#back').show();
     $('#title').html(moduleInfo.Title);
     $('#title').attr('href', `${endpoint}/d2l/le/content/${courseInfo.courseId}/Home?itemIdentifier=D2L.LE.Content.ContentObject.ModuleCO-${moduleInfo.ModuleId}`);
     let topics = moduleInfo.Topics;

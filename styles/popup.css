@@ -1,5 +1,4 @@
 body {
-	/*font-size: large;*/
 	width: 450px;
 	min-height: 600px;
 }
@@ -8,11 +7,11 @@ body {
 	border-bottom: 1px solid black;
 }
 
-a:focus {
-	outline: none;
+.row {
+	padding:10px;
 }
 
-.row {
-	padding:10px
-
+.extLink {
+	display: flex;
+	justify-content: space-between;
 }

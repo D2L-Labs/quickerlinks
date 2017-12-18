@@ -59,7 +59,6 @@ function loadCourses() {
             $(".row").append("<div class=\"col-xs-6\"> </div>")
 
             // Append card to every column
-            $(".col-xs-6").append('<div class="card"></div>')
             $(".col-xs-6").each(function (index) {
                 if (index >= courses.length) return;
 
@@ -71,13 +70,15 @@ function loadCourses() {
                     // Set to default
                     image = "https://d2q79iu7y748jz.cloudfront.net/s/_logo/2b6d922805d2214befee400b8bb5de7f.png"
                 }
-                $(this).append(`<img src="${image}" height="140" width="140"/>`)
-                $(this).append(`<div class="card-block"><a href="${endpoint}/d2l/le/content/${id}/Home" target="_blank">${title}</a></div>`)
-                $(this).append(`<button href="#" id="${id}" class="btn btn-primary">View course</button>`)
+                $(this).append(`<a href="#" id="${id}"><img src="${image}" height="140" width="190"/></a>`);
+                $(this).append(`<div class="extLink"><a href="#" id="${id}">${title}</a><a href="${endpoint}/d2l/le/content/${id}/Home" target="_blank"><span class="glyphicon glyphicon-new-window"></span></a></div>`);
             })
-            $('button').click(function() {
+            $('a').click(function() {
                let courseId = $(this).attr('id');
-               let courseName = $(this).prev().text();
+               let courseName = $(this).text();
+               if (!courseName) {
+                   courseName = $(this).next().children(":first").text();
+               }
                courseInfo = {courseId, courseName};
                loadResources(courseInfo);
                functions.push(loadCourses);
@@ -104,7 +105,6 @@ function loadResources(courseInfo) {
         functions.push(loadResources);
         currentState++;
     });
-    console.log(courseInfo.courseName)
     $('#breadcrumb').append(`<li id="bc1">${courseInfo.courseName}</li>`);
     $('#bc0').html(`<a href="#">${$('#bc0').html()}</a>`);
 }

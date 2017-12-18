@@ -1,4 +1,3 @@
-
 let endpoint = 'https://d2llabs.desire2learn.com';
 // let endpoint = 'https://learn.uwaterloo.ca';
 let leVersion = '1.24';
@@ -6,6 +5,7 @@ let lpVersion = '1.20';
 let divs = ['courses', 'resources', 'modules', 'topics', 'announcements', 'grades'];
 let resources = ['Content', 'Announcements', 'Grades'];
 let resourceFns = [loadModules, loadAnnouncements, loadGrades];
+let breadcrumbs = ['Courses', 'Resources'];
 //currentState 0-courses, 1-resources, 2-modules, 3-topics
 let currentState = 0;
 let courseInfo = {};
@@ -15,10 +15,16 @@ let pinnedOnly = true;
 $(document).ready(function() {
     createDivs();
     loadCourses();
-    $('button').click(function() {
-        currentState = Math.max(0, currentState-1);
-        functions[currentState](courseInfo);
-        functions.pop();
+    $(document).on('click', '#breadcrumb li', function() {
+        let newState = parseInt($(this).attr('id').substring(2));
+        if (currentState !== newState) {
+            $('#breadcrumb').empty();
+            for (let i=0; i<newState; i++) {
+                $('#breadcrumb').append(`<li id="bc${i}">${breadcrumbs[i]}</li>`);
+            }
+            functions[newState](courseInfo);
+            functions.pop();
+        }
     });
 });
 
@@ -60,6 +66,7 @@ function loadCourses() {
                     }
                 });
             }
+            $('#breadcrumb').append('<li id="bc0">Courses</li>');
         },
         error: function (e) {
             $('#courses').html(`<a href="${endpoint}/d2l/login" target="_blank">Could not login. Click here to log in.</a>`);
@@ -84,6 +91,8 @@ function loadResources(courseInfo) {
             currentState++;
         }
     });
+    $('#breadcrumb').append('<li id="bc1">Resources</li>');
+    $('#bc0').html(`<a>${$('#bc0').html()}</a>`);
 }
 
 function loadModules(courseInfo) {
@@ -112,6 +121,8 @@ function loadModules(courseInfo) {
                     }
                 });
             }
+            $('#breadcrumb').append('<li id="bc2">Modules</li>');
+            $('#bc1').html(`<a>${$('#bc1').html()}</a>`);
         },
         error: function (e) {
             console.log("Error: Not a valid URL.");
@@ -135,6 +146,8 @@ function loadAnnouncements(courseInfo) {
             if (announcements.length === 0) {
                 $('#announcements').html('There are no announcements in this course.');
             }
+            $('#breadcrumb').append('<li id="bc2">Announcements</li>');
+            $('#bc1').html(`<a>${$('#bc1').html()}</a>`);
         },
         error: function (e) {
             console.log("Error: Not a valid URL.");
@@ -156,6 +169,8 @@ function loadGrades(courseInfo) {
             if (grades.length === 0) {
                 $('#grades').html('There are no grades in this course.');
             }
+            $('#breadcrumb').append('<li id="bc2">Grades</li>');
+            $('#bc1').html(`<a>${$('#bc1').html()}</a>`);
         },
         error: function (e) {
             console.log("Error: Not a valid URL.");
@@ -179,6 +194,8 @@ function loadTopics(courseInfo, moduleInfo) {
     if (topics.length === 0) {
         $('#topics').html('There are no topics in this module.');
     }
+    $('#breadcrumb').append('<li id="bc3">Topics</li>');
+    $('#bc2').html(`<a>${$('#bc2').html()}</a>`);
 }
 
 function showDiv(id) {

@@ -65,29 +65,6 @@ function loadCourses() {
                 $(this).append(`<div class="card-block">${title}</div>`)
                 $(this).append(`<a href="#" id="${id}"class="btn btn-primary">Enter course</a>`)
             })
-
-            let enrolled = false;
-            for (let i=0; i<courses.length; i++) {
-                if (!pinnedOnly || courses[i].PinDate) {
-                    enrolled = true;
-                    $('#courses').append(`<button id="${courses[i].OrgUnit.Id}">${courses[i].OrgUnit.Name}</button>`);
-                }
-            }
-            if (!enrolled) {
-                $('#courses').html('You are not enrolled in any courses.');
-            }
-            else {
-                $('button').click(function() {
-                    let courseId = $(this).attr('id');
-                    if (!courseId.startsWith("back")) {
-                        let courseName = $(this).html();
-                        courseInfo = {courseId, courseName};
-                        loadResources(courseInfo);
-                        functions.push(loadCourses);
-                        currentState++;
-                    }
-                });
-            }
         },
         error: function (e) {
             $('#courses').html(`<a href="${endpoint}/d2l/login" target="_blank">Could not login. Click here to log in.</a>`);

@@ -44,29 +44,34 @@ function loadCourses() {
         dataType: "json",
         success: function(data) {
             let courses = data.Items;
-            let enrolled = false;
-            for (let i=0; i<courses.length; i++) {
-                if (!pinnedOnly || courses[i].PinDate) {
-                    enrolled = true;
-                    $('#courses').append(`<button id="${courses[i].OrgUnit.Id}">${courses[i].OrgUnit.Name}</button>`);
-                }
-            }
-            if (!enrolled) {
-                $('#courses').html('You are not enrolled in any courses.');
-            }
-            else {
-                $('button').click(function() {
-                    let courseId = $(this).attr('id');
-                    if (!courseId.startsWith("back")) {
-                        let courseName = $(this).html();
-                        courseInfo = {courseId, courseName};
-                        loadResources(courseInfo);
-                        functions.push(loadCourses);
-                        currentState++;
-                    }
-                });
+            let numRows = courses.length / 2 + 1;
+
+            // Two courses take up one row.
+            for (var i = 0; i < numRows; i++) {
+                $("#coursesDisplay").append("<div class=\"row\"></div>")
             }
             $('#breadcrumb').append('<li id="bc0">Courses</li>');
+            // Appends to cols of width 6 to every row.
+            $(".row").append("<div class=\"col-xs-6\"> </div>")
+            $(".row").append("<div class=\"col-xs-6\"> </div>")
+
+            // Append card to every column
+            $(".col-xs-6").append('<div class="card"></div>')
+            $(".col-xs-6").each(function (index) {
+                if (index >= courses.length) return;
+
+                let image = courses[index].OrgUnit.ImageUrl
+                let title = courses[index].OrgUnit.Name
+                let id = courses[index].OrgUnit.Id
+
+                if (!image) {
+                    // Set to default
+                    image = "https://d2q79iu7y748jz.cloudfront.net/s/_logo/2b6d922805d2214befee400b8bb5de7f.png"
+                }
+                $(this).append(`<img src="${image}" height="100" width="100"/>`)
+                $(this).append(`<div class="card-block">${title}</div>`)
+                $(this).append(`<a href="#" id="${id}"class="btn btn-primary">Enter course</a>`)
+            })
         },
         error: function (e) {
             $('#courses').html(`<a href="${endpoint}/d2l/login" target="_blank">Could not login. Click here to log in.</a>`);

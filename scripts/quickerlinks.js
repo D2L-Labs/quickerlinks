@@ -20,10 +20,11 @@ $(document).ready(function() {
         if (currentState !== newState) {
             $('#breadcrumb').empty();
             for (let i=0; i<newState; i++) {
-                $('#breadcrumb').append(`<li id="bc${i}">${breadcrumbs[i]}</li>`);
+                $('#breadcrumb').append(`<li id="bc${i}"><a href="#">${breadcrumbs[i]}</a></li>`);
             }
             functions[newState](courseInfo);
-            functions.pop();
+            functions.splice(newState);
+            currentState = newState;
         }
     });
 });
@@ -101,7 +102,7 @@ function loadResources(courseInfo) {
         currentState++;
     });
     $('#breadcrumb').append('<li id="bc1">Resources</li>');
-    $('#bc0').html(`<a>${$('#bc0').html()}</a>`);
+    $('#bc0').html(`<a href="#">${$('#bc0').html()}</a>`);
 }
 
 function loadModules(courseInfo) {
@@ -128,7 +129,7 @@ function loadModules(courseInfo) {
                 });
             }
             $('#breadcrumb').append('<li id="bc2">Modules</li>');
-            $('#bc1').html(`<a>${$('#bc1').html()}</a>`);
+            $('#bc1').html(`<a href="#">${$('#bc1').html()}</a>`);
         },
         error: function (e) {
             console.log("Error: Not a valid URL.");
@@ -152,7 +153,7 @@ function loadAnnouncements(courseInfo) {
                 $('#announcements').html('There are no announcements in this course.');
             }
             $('#breadcrumb').append('<li id="bc2">Announcements</li>');
-            $('#bc1').html(`<a>${$('#bc1').html()}</a>`);
+            $('#bc1').html(`<a href="#">${$('#bc1').html()}</a>`);
         },
         error: function (e) {
             console.log("Error: Not a valid URL.");
@@ -174,7 +175,7 @@ function loadGrades(courseInfo) {
                 $('#grades').html('There are no grades in this course.');
             }
             $('#breadcrumb').append('<li id="bc2">Grades</li>');
-            $('#bc1').html(`<a>${$('#bc1').html()}</a>`);
+            $('#bc1').html(`<a href="#">${$('#bc1').html()}</a>`);
         },
         error: function (e) {
             console.log("Error: Not a valid URL.");
@@ -198,7 +199,7 @@ function loadTopics(courseInfo, moduleInfo) {
         $('#topics').html('There are no topics in this module.');
     }
     $('#breadcrumb').append('<li id="bc3">Topics</li>');
-    $('#bc2').html(`<a>${$('#bc2').html()}</a>`);
+    $('#bc2').html(`<a href="#">${$('#bc2').html()}</a>`);
 }
 
 function showDiv(id) {

@@ -22,6 +22,9 @@ $(document).ready(function() {
             for (let i=0; i<newState; i++) {
                 $('#breadcrumb').append(`<li id="bc${i}"><a href="#">${breadcrumbs[i]}</a></li>`);
             }
+            if ($('#breadcrumb').has($('#bc1'))) {
+                $('#bc1 a').html(courseInfo.courseName);
+            }
             functions[newState](courseInfo);
             functions.splice(newState);
             currentState = newState;
@@ -37,7 +40,7 @@ function createDivs() {
 
 function loadCourses() {
     showDiv('courses');
-    $('#title').html('Your Courses');
+    $('#title').html('Link to Home Page');
     $('#title').attr('href', `${endpoint}/d2l/home`);
     $.ajax({
         url: `${endpoint}/d2l/api/lp/${lpVersion}/enrollments/myenrollments/?OrgUnitTypeId=3&sortBy=-PinDate`,
@@ -69,12 +72,12 @@ function loadCourses() {
                     image = "https://d2q79iu7y748jz.cloudfront.net/s/_logo/2b6d922805d2214befee400b8bb5de7f.png"
                 }
                 $(this).append(`<img src="${image}" height="140" width="140"/>`)
-                $(this).append(`<div class="card-block">${title}</div>`)
-                $(this).append(`<button href="#" id="${id}"class="btn btn-primary">Enter course</button>`)
+                $(this).append(`<div class="card-block"><a href="${endpoint}/d2l/le/content/${id}/Home" target="_blank">${title}</a></div>`)
+                $(this).append(`<button href="#" id="${id}" class="btn btn-primary">View course</button>`)
             })
             $('button').click(function() {
                let courseId = $(this).attr('id');
-               let courseName = $(this).html();
+               let courseName = $(this).prev().text();
                courseInfo = {courseId, courseName};
                loadResources(courseInfo);
                functions.push(loadCourses);
@@ -101,7 +104,8 @@ function loadResources(courseInfo) {
         functions.push(loadResources);
         currentState++;
     });
-    $('#breadcrumb').append('<li id="bc1">Resources</li>');
+    console.log(courseInfo.courseName)
+    $('#breadcrumb').append(`<li id="bc1">${courseInfo.courseName}</li>`);
     $('#bc0').html(`<a href="#">${$('#bc0').html()}</a>`);
 }
 

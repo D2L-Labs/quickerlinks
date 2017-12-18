@@ -1,7 +1,7 @@
 body {
 	/*font-size: large;*/
 	width: 450px;
-	min-height: 500px;
+	min-height: 600px;
 }
 
 .header {
@@ -15,4 +15,9 @@ body {
 
 a:focus {
 	outline: none;
+}
+
+.row {
+	padding:10px
+
 }

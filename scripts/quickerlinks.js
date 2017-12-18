@@ -71,9 +71,9 @@ function loadCourses() {
                     image = "https://d2q79iu7y748jz.cloudfront.net/s/_logo/2b6d922805d2214befee400b8bb5de7f.png"
                 }
                 $(this).append(`<a href="#" id="${id}"><img src="${image}" height="82" width="190"/></a>`);
-                $(this).append(`<div class="extLink"><a href="#" id="${id}">${title}</a><a href="${endpoint}/d2l/le/content/${id}/Home" target="_blank"><span class="glyphicon glyphicon-new-window"></span></a></div>`);
+                $(this).append(`<div class="extLink"><a href="#" id="${id}">${title}</a><a href="${endpoint}/d2l/home/${id}" target="_blank"><span class="glyphicon glyphicon-new-window"></span></a></div>`);
             })
-            $('a').click(function() {
+            $('#courses a').click(function() {
                let courseId = $(this).attr('id');
                let courseName = $(this).text();
                if (!courseName) {
@@ -132,7 +132,7 @@ function loadModules(courseInfo) {
                     currentState++;
                 });
             }
-            $('#breadcrumb').append('<li id="bc2">Modules</li>');
+            $('#breadcrumb').append('<li id="bc2">Content</li>');
             $('#bc1').html(`<a href="#">${$('#bc1').html()}</a>`);
         },
         error: function (e) {

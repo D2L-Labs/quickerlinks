@@ -1,0 +1,22 @@
+body {
+	width: 450px;
+	min-height: 700px;
+}
+
+.spaceBetween {
+	display: flex;
+	justify-content: space-between;
+}
+
+.courseTitle {
+	margin-top: 110px;
+}
+
+.courseHeader div a {
+	color: #FFFFFF;
+}
+
+.headerGlyphicons, .title {
+	margin-top: 10px;
+    font-size: 180%;
+}

@@ -11,6 +11,7 @@ let breadcrumbs = ['Courses', 'Resources'];
 let currentState = 0;
 let courseInfo = {};
 let functions = [];
+let topicsCache = null;
 
 $(document).ready(function() {
     createDivs();
@@ -93,10 +94,46 @@ function loadResources(courseInfo) {
     });
 }
 
+function displayCachedTopics(courseInfo) {
+    $('#modules').append('<div id="recentView"></div>')
+    $('#modules').children('#recentView').append('<h4>Recently viewed</h4>')
+    if (topicsCache[courseInfo.courseId]) { // If there are any available links for this org unit
+        topicsCache[courseInfo.courseId].forEach(function (historyItem) {
+            $('#modules').children('#recentView').append(`<a href="${historyItem.url}" target="_blank">${historyItem.title}</a> <br/>`)
+        })
+    } else { // else display no recently visited topics message
+        $('#modules').children('#recentView').append("<p> No recently viewed links from this course </p>")
+    }
+}
+
 function loadModules(courseInfo) {
     showDiv('modules');
     $('#title').html(courseInfo.courseName);
     $('#title').attr('href', `${endpoint}/d2l/le/content/${courseInfo.courseId}/Home`);
+
+    if (!topicsCache) { // If topics cache has not been made then make it
+        topicsCache = {}
+        chrome.history.search({text: ''}, function (data) {
+            data.filter(function (item) {
+                return ~item.url.indexOf(endpoint) && ~item.url.indexOf('viewContent')
+            }).forEach(function (historyItem) {
+                // In le version, the URL for viewed content looks similar to the example below
+                // https://d2llabs.desire2learn.com/d2l/le/content/8432/viewContent/1055235/View
+                // So by splitting on the '/' character, we can obtain the org unit
+                // by looking at the 6th index of the resulting array
+                orgUnit = historyItem.url.split('/')[6];
+                if (topicsCache[orgUnit]) {
+                    topicsCache[orgUnit].push(historyItem)
+                } else {
+                    topicsCache[orgUnit] = [historyItem]
+                }
+            })
+            displayCachedTopics(courseInfo)
+        })
+    } else {
+        displayCachedTopics(courseInfo)
+    }
+    /*
     $.ajax({
         url: `${endpoint}/d2l/api/le/${leVersion}/${courseInfo.courseId}/content/toc`,
         dataType: "json",
@@ -121,6 +158,7 @@ function loadModules(courseInfo) {
             console.log("Error: Not a valid URL.");
         }
     });
+    */
 }
 
 function loadAnnouncements(courseInfo) {

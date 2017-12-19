@@ -6,10 +6,13 @@ body {
 .spaceBetween {
 	display: flex;
 	justify-content: space-between;
-	margin-bottom: 110px;
 }
 
-.header div a {
+.courseTitle {
+	margin-top: 110px;
+}
+
+.courseHeader div a {
 	color: #FFFFFF;
 }
 
@@ -58,3 +61,12 @@ body {
 .name {
 	margin-top: .5rem;
 }
+
+.homeHeader {
+	display: flex;
+}
+
+/*.homeHeader a {
+	font-size: 180%;
+	margin-top: auto;
+}*/

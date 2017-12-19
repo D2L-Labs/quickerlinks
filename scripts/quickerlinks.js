@@ -4,13 +4,15 @@ let endpoint = localStorage["quickerLinks.domain"];
 let leVersion = '1.24';
 let lpVersion = '1.20';
 let divs = ['home', 'course'];
-let headers = ['homeHeader', 'courseHeader'];
-let resources = ['Content', 'Announcements', 'Grades'];
+let badges = ['Discussions', 'Quizzes', 'Grades'];
 let topicsCache = null;
 
 $(document).ready(function() {
     createDivs();
     endpoint ? loadCourses() : $('#home').html(`<a href="settings.html">No domain has been chosen yet. Click here.</a>`);
+    $('#back').click(function() {
+        loadCourses();
+    })
 });
 
 function createDivs() {
@@ -46,16 +48,16 @@ function loadCourses() {
             $(".col-xs-6").each(function (index) {
                 if (index >= pinnedCourses.length) return;
 
-                let image = pinnedCourses[index].OrgUnit.ImageUrl
-                let title = pinnedCourses[index].OrgUnit.Name
-                let id = pinnedCourses[index].OrgUnit.Id
+                let image = pinnedCourses[index].OrgUnit.ImageUrl || "https://d2q79iu7y748jz.cloudfront.net/s/_logo/2b6d922805d2214befee400b8bb5de7f.png";
+                let title = pinnedCourses[index].OrgUnit.Name;
+                let id = pinnedCourses[index].OrgUnit.Id;
 
                 if (!image) {
                     // Set to default
                     image = "https://d2q79iu7y748jz.cloudfront.net/s/_logo/2b6d922805d2214befee400b8bb5de7f.png"
                 }
                 $(this).append(`<div class=courseInfo>
-                                    <a href="#" id="${id}"><img src="${image}" height="82" width="190"/></a>
+                                    <a href="#" id="${id}"><img src="${image}" height="87" width="200"/></a>
                                     <div class="extLink">
                                         <a href="#" id="${id}" class="name">${title}</a>
                                     </div>
@@ -78,10 +80,7 @@ function loadCourses() {
             })
             $('#home a').click(function() {
                let courseId = $(this).attr('id');
-               let courseName = $(this).text();
-               if (!courseName) {
-                   courseName = $(this).next().children(":first").text();
-               }
+               let courseName = $(this).text() || $(this).next().children(":first").text();
                loadCourse({courseId, courseName});
            });
         },
@@ -93,46 +92,46 @@ function loadCourses() {
 }
 
 function loadCourse(courseInfo) {
-    showDiv('course');
-    $('#homeHeader').hide();
-    $('#courseHeader').show();
-    $('#title').html(courseInfo.courseName);
-    $('#title').attr('href', `${endpoint}/d2l/home/${courseInfo.courseId}`);
     $.ajax({
         url: `${endpoint}/d2l/api/lp/${lpVersion}/enrollments/myenrollments/${courseInfo.courseId}`,
         dataType: "json",
         success: function(data) {
+            showDiv('course');
+            $('#homeHeader').hide();
+            $('#courseHeader').show();
+            $('#title').html(courseInfo.courseName);
+            $('#title').attr('href', `${endpoint}/d2l/home/${courseInfo.courseId}`);
             let image = data.OrgUnit.ImageUrl || "https://d2q79iu7y748jz.cloudfront.net/s/_logo/2b6d922805d2214befee400b8bb5de7f.png";
-            $('#header').css('background-image', `url("${image}")`);
-            $('#header').css('width', window.innerWidth);
-            $('#header').css('height', window.innerWidth/2.32);
+            $('#courseHeader').css('background-image', `url("${image}")`);
+            $('#courseHeader').css('width', window.innerWidth);
+            $('#courseHeader').css('height', window.innerWidth/2.32);
+            $('#course').html(`<ul id="badges" class="nav nav-pills" role="tablist"></ul>`);
+            for (let i=0; i<badges.length; i++) {
+                $('#badges').append(`<li role="presentation" class="active"><a href="#">${badges[i]} <span class="badge">NUM</span></a></li>`)
+            }
+            $('#course').append(`<div id="assignments">Assignments</div>`);
+            $('#course').append(`<div id="recentContent"></div>`);
+            loadContent(courseInfo);
         },
         error: function (e) {
             console.log("Error: Not a valid URL.");
         }
     });
-    for (let i=0; i<resources.length; i++) {
-        $('#course').append(`<button id="${i}">${resources[i]}</button>`);
-    }
 }
 
 function displayCachedTopics(courseInfo) {
-    $('#modules').append('<div id="recentView"></div>')
-    $('#modules').children('#recentView').append('<h4>Recently viewed</h4>')
+    $('#recentContent').append('<div id="recentView"></div>')
+    $('#recentContent').children('#recentView').append('<h4>Recently viewed</h4>')
     if (topicsCache[courseInfo.courseId]) { // If there are any available links for this org unit
         topicsCache[courseInfo.courseId].forEach(function (historyItem) {
-            $('#modules').children('#recentView').append(`<a href="${historyItem.url}" target="_blank">${historyItem.title}</a> <br/>`)
+            $('#recentContent').children('#recentView').append(`<a href="${historyItem.url}" target="_blank">${historyItem.title}</a> <br/>`)
         })
     } else { // else display no recently visited topics message
-        $('#modules').children('#recentView').append("<p> No recently viewed links from this course </p>")
+        $('#recentContent').children('#recentView').append("<p> No recently viewed links from this course </p>")
     }
 }
 
-function loadModules(courseInfo) {
-    showDiv('modules');
-    $('#title').html(courseInfo.courseName);
-    $('#title').attr('href', `${endpoint}/d2l/le/content/${courseInfo.courseId}/Home`);
-
+function loadContent(courseInfo) {
     if (!topicsCache) { // If topics cache has not been made then make it
         topicsCache = {}
         chrome.history.search({text: ''}, function (data) {

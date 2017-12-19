@@ -40,14 +40,16 @@ function createDivs() {
 
 function loadCourses() {
     showDiv('courses');
-    $('#title').html('Link to Home Page');
     $('#title').attr('href', `${endpoint}/d2l/home`);
     $.ajax({
-        url: `${endpoint}/d2l/api/lp/${lpVersion}/enrollments/myenrollments/?OrgUnitTypeId=3&sortBy=-PinDate`,
+        url: `${endpoint}/d2l/api/lp/${lpVersion}/enrollments/myenrollments/?OrgUnitTypeId=1,3&sortBy=-PinDate`,
         dataType: "json",
         success: function(data) {
             let courses = data.Items;
-            let numRows = courses.length / 2 + 1;
+            let domainName = courses.filter(course => course.OrgUnit.Type.Id === 1)[0].OrgUnit.Name;
+            $('#title').html(domainName);
+            let pinnedCourses = courses.filter(course => (!pinnedOnly || course.PinDate)).filter(course => course.OrgUnit.Type.Id === 3);
+            let numRows = pinnedCourses.length / 2 + 1;
 
             // Two courses take up one row.
             for (var i = 0; i < numRows; i++) {
@@ -60,11 +62,11 @@ function loadCourses() {
 
             // Append card to every column
             $(".col-xs-6").each(function (index) {
-                if (index >= courses.length) return;
+                if (index >= pinnedCourses.length) return;
 
-                let image = courses[index].OrgUnit.ImageUrl
-                let title = courses[index].OrgUnit.Name
-                let id = courses[index].OrgUnit.Id
+                let image = pinnedCourses[index].OrgUnit.ImageUrl
+                let title = pinnedCourses[index].OrgUnit.Name
+                let id = pinnedCourses[index].OrgUnit.Id
 
                 if (!image) {
                     // Set to default

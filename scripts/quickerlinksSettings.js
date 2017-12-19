@@ -20,7 +20,7 @@ $(document).ready(function() {
     }
     else {
         console.log("set")
-        if (localStorage["quickerLinks.pinnedOnly"]) {
+        if (localStorage["quickerLinks.pinnedOnly"] === 'true') {
             console.log("TRUE")
             $('#pinnedCourses').prop('checked', true);
         }

@@ -16,6 +16,7 @@ body {
 .extLink {
 	display: flex;
 	justify-content: space-between;
+	padding-top: .25rem
 }
 
 .setting {
@@ -24,4 +25,27 @@ body {
 
 .input {
 	width: 250px;
+}
+
+.notification {
+	border: 2px solid #e87511;
+	color: #e87511;
+	border-radius: .25rem;
+	font-size: 1.5rem;
+	font-weight: 700;
+	width: 2.5rem;
+	height: 2.5rem;
+	line-height: 2rem;
+	display: inline-flex;
+	margin-top: .25rem;
+	align-items: center;
+	justify-content: center;
+}
+
+.courseInfo {
+	padding-top: 1rem;
+}
+
+.name {
+	margin-top: .5rem;
 }

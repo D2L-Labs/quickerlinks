@@ -3,10 +3,19 @@ body {
 	min-height: 620px;
 }
 
-.header {
+.spaceBetween {
 	display: flex;
 	justify-content: space-between;
-	border-bottom: 1px solid black;
+	margin-bottom: 110px;
+}
+
+.header div a {
+	color: #FFFFFF;
+}
+
+.headerGlyphicons, .title {
+	margin-top: 10px;
+    font-size: 180%;
 }
 
 .row {

@@ -13,16 +13,23 @@
 		<link rel="stylesheet" href="styles/popup.css">
 	</head>
 	<body>
-
-		<div class="container-fluid">
+		<div>
 			<div tabindex="1"></div>
-			<div class="header">
-				<div>QuickerLinks</div>
-				<a href="settings.html"><span class="glyphicon glyphicon-cog"></span></a>
+			<div id="header" class="header">
+				<div id="homeHeader">
+
+				</div>
+				<div id="courseHeader" class="container-fluid">
+					<div class="spaceBetween">
+						<a id="back"><span class="glyphicon glyphicon-menu-left headerGlyphicons"></span></a>
+						<a href="settings.html"><span class="glyphicon glyphicon-cog headerGlyphicons"></span></a>
+					</div>
+					<div>
+						<a class="title" id="title" target="_blank"></a>
+					</div>
+				</div>
 			</div>
-			<div class="main" id="main">
-				<a class="title" id="title" target="_blank"></a>
-			</div>
+			<div class="main" id="main"></div>
 		</div>
 	</body>
 

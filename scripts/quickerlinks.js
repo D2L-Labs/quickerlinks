@@ -16,22 +16,6 @@ let topicsCache = null;
 $(document).ready(function() {
     createDivs();
     loadCourses();
-    chrome.history.search({text: ''}, function (data) {
-        data.filter(function (item) {
-            return ~item.url.indexOf(endpoint) && ~item.url.indexOf('viewContent')
-        }).forEach(function (historyItem) {
-            // In le version, the URL for viewed content looks similar to the example below
-            // https://d2llabs.desire2learn.com/d2l/le/content/8432/viewContent/1055235/View
-            // So by splitting on the '/' character, we can obtain the org unit
-            // by looking at the 6th index of the resulting array
-            orgUnit = historyItem.url.split('/')[6];
-            if (topicsCache[orgUnit]) {
-                topicsCache[orgUnit].push(historyItem)
-            } else {
-                topicsCache[orgUnit] = [historyItem]
-            }
-        })
-    })
     $(document).on('click', '#breadcrumb li', function() {
         let newState = parseInt($(this).attr('id').substring(2));
         if (currentState !== newState) {

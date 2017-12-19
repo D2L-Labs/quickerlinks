@@ -105,13 +105,27 @@ function loadCourse(courseInfo) {
             $('#courseHeader').css('background-image', `url("${image}")`);
             $('#courseHeader').css('width', window.innerWidth);
             $('#courseHeader').css('height', window.innerWidth/2.32);
+            loadUpdates(courseInfo);
+            loadContent(courseInfo);
+        },
+        error: function (e) {
+            console.log("Error: Not a valid URL.");
+        }
+    });
+}
+
+function loadUpdates(courseInfo) {
+    $.ajax({
+        url: `${endpoint}/d2l/api/le/${leVersion}/${courseInfo.courseId}/updates/myUpdates`,
+        dataType: "json",
+        success: function(data) {
+            let unreadData = [data.UnreadDiscussions, data.UnreadAssignmentFeedback, data.UnattemptedQuizzes];
             $('#course').html(`<ul id="badges" class="nav nav-pills" role="tablist"></ul>`);
             for (let i=0; i<badges.length; i++) {
-                $('#badges').append(`<li role="presentation" class="active"><a href="#">${badges[i]} <span class="badge">NUM</span></a></li>`)
+                $('#badges').append(`<li role="presentation" class="active"><a href="#">${badges[i]} <span class="badge">${unreadData[i]}</span></a></li>`)
             }
             $('#course').append(`<div id="assignments">Assignments</div>`);
-            $('#course').append(`<div id="recentContent"></div>`);
-            loadContent(courseInfo);
+            $('#course').append(`<div id="recentContent">Recent Content</div>`);
         },
         error: function (e) {
             console.log("Error: Not a valid URL.");

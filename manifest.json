@@ -13,5 +13,9 @@
    		"http://*/*",
    		"https://*/*",
 		"history"
-   	]
+   	],
+	"background": {
+    	"scripts": ["scripts/quickerlinks.js", "scripts/course.js"],
+     	"persistent": false
+   	}
 }

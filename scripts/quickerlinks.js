@@ -6,9 +6,6 @@ let lpVersion = '1.20';
 
 $(document).ready(function() {
     endpoint ? loadCourses() : $('#home').html(`<a href="settings.html">No domain has been chosen yet. Click here.</a>`);
-    $('#back').click(function() {
-        loadCourses();
-    });
 });
 
 function loadCourses() {

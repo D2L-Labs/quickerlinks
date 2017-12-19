@@ -11,7 +11,12 @@ $(document).ready(function() {
     let courseId = window.location.search.substring(courseStart + 3, nameStart - 1);
     let courseName = window.location.search.substring(nameStart + 5).replace(new RegExp('%20', 'g'), ' ')
     let courseInfo = {courseId, courseName}
+    $('#course').append(`<div id="assignments">Assignments</div>`);
+    $('#course').append(`<div id="recentContent">Recent Content</div>`);
     loadCourse(courseInfo)
+    $('#back').click(function() {
+        window.location.href = 'popup.html'
+    });
 });
 
 
@@ -20,19 +25,13 @@ function loadCourse(courseInfo) {
         url: `${endpoint}/d2l/api/lp/${lpVersion}/enrollments/myenrollments/${courseInfo.courseId}`,
         dataType: "json",
         success: function(data) {
-            $('#courseHeader').show();
             $('#title').html(courseInfo.courseName);
             $('#title').attr('href', `${endpoint}/d2l/home/${courseInfo.courseId}`);
             let image = data.OrgUnit.ImageUrl || "https://d2q79iu7y748jz.cloudfront.net/s/_logo/2b6d922805d2214befee400b8bb5de7f.png";
             $('#courseHeader').css('background-image', `url("${image}")`);
             $('#courseHeader').css('width', window.innerWidth);
             $('#courseHeader').css('height', window.innerWidth/2.32);
-            $('#course').html(`<ul id="badges" class="nav nav-pills" role="tablist"></ul>`);
-            for (let i=0; i<badges.length; i++) {
-                $('#badges').append(`<li role="presentation" class="active"><a href="#">${badges[i]} <span class="badge">NUM</span></a></li>`)
-            }
-            $('#course').append(`<div id="assignments">Assignments</div>`);
-            $('#course').append(`<div id="recentContent"></div>`);
+            loadUpdates(courseInfo);
             loadContent(courseInfo);
         },
         error: function (e) {
@@ -95,7 +94,6 @@ function loadContent(courseInfo) {
 
 function displayCachedTopics(courseInfo) {
     $('#recentContent').append('<div id="recentView"></div>')
-    $('#recentContent').children('#recentView').append('<h4>Recently viewed</h4>')
     if (topicsCache[courseInfo.courseId]) { // If there are any available links for this org unit
         topicsCache[courseInfo.courseId].forEach(function (historyItem) {
             $('#recentContent').children('#recentView').append(`<a href="${historyItem.url}" target="_blank">${historyItem.title}</a> <br/>`)
@@ -103,6 +101,23 @@ function displayCachedTopics(courseInfo) {
     } else { // else display no recently visited topics message
         $('#recentContent').children('#recentView').append("<p> No recently viewed links from this course </p>")
     }
+}
+
+function loadUpdates(courseInfo) {
+    $.ajax({
+        url: `${endpoint}/d2l/api/le/${leVersion}/${courseInfo.courseId}/updates/myUpdates`,
+        dataType: "json",
+        success: function(data) {
+            let unreadData = [data.UnreadDiscussions, data.UnreadAssignmentFeedback, data.UnattemptedQuizzes];
+            $('#course').prepend(`<ul id="badges" class="nav nav-pills" role="tablist"></ul>`);
+            for (let i=0; i<badges.length; i++) {
+                $('#badges').append(`<li role="presentation" class="active"><a href="#">${badges[i]} <span class="badge">${unreadData[i]}</span></a></li>`)
+            }
+        },
+        error: function (e) {
+            console.log("Error: Not a valid URL.");
+        }
+    });
 }
 
 // function loadAnnouncements(courseInfo) {

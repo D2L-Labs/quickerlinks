@@ -13,19 +13,14 @@ $(document).ready(function() {
         localStorage["quickerLinks.domain"] = domain;
     });
 
-    console.log(localStorage["quickerLinks.pinnedOnly"])
     if (localStorage["quickerLinks.pinnedOnly"] === null) {
-        console.log("unset")
         $('#allCourses').prop('checked', true);
     }
     else {
-        console.log("set")
         if (localStorage["quickerLinks.pinnedOnly"] === 'true') {
-            console.log("TRUE")
             $('#pinnedCourses').prop('checked', true);
         }
         else {
-            console.log("FALSE")
             $('#allCourses').prop('checked', true);
         }
     }

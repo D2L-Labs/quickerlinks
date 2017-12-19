@@ -3,19 +3,14 @@ let endpoint = localStorage["quickerLinks.domain"];
 // let endpoint = 'https://learn.uwaterloo.ca';
 let leVersion = '1.24';
 let lpVersion = '1.20';
-let divs = ['courses', 'resources', 'modules', 'topics', 'announcements', 'grades'];
+let divs = ['home', 'course'];
+let headers = ['homeHeader', 'courseHeader'];
 let resources = ['Content', 'Announcements', 'Grades'];
-let resourceFns = [loadModules, loadAnnouncements, loadGrades];
-let breadcrumbs = ['Courses', 'Resources'];
-//currentState 0-courses, 1-resources, 2-modules, 3-topics
-let currentState = 0;
-let courseInfo = {};
-let functions = [];
 let topicsCache = null;
 
 $(document).ready(function() {
     createDivs();
-    endpoint ? loadCourses() : $('#courses').html(`<a href="settings.html">No domain has been chosen yet. Click here.</a>`);
+    endpoint ? loadCourses() : $('#home').html(`<a href="settings.html">No domain has been chosen yet. Click here.</a>`);
 });
 
 function createDivs() {
@@ -25,7 +20,9 @@ function createDivs() {
 }
 
 function loadCourses() {
-    showDiv('courses');
+    showDiv('home');
+    $('#courseHeader').hide();
+    $('#homeHeader').show();
     $('#title').attr('href', `${endpoint}/d2l/home`);
     $.ajax({
         url: `${endpoint}/d2l/api/lp/${lpVersion}/enrollments/myenrollments/?OrgUnitTypeId=1,3&sortBy=-PinDate`,
@@ -39,7 +36,7 @@ function loadCourses() {
 
             // Two courses take up one row.
             for (var i = 0; i < numRows; i++) {
-                $("#courses").append("<div class=\"row\"></div>")
+                $("#home").append("<div class=\"row\"></div>")
             }
             // Appends to cols of width 6 to every row.
             $(".row").append("<div class=\"col-xs-6\"> </div>")
@@ -60,38 +57,44 @@ function loadCourses() {
                 $(this).append(`<a href="#" id="${id}"><img src="${image}" height="82" width="190"/></a>`);
                 $(this).append(`<div class="extLink"><a href="#" id="${id}">${title}</a><a href="${endpoint}/d2l/home/${id}" target="_blank"><span class="glyphicon glyphicon-new-window"></span></a></div>`);
             })
-            $('#courses a').click(function() {
+            $('#home a').click(function() {
                let courseId = $(this).attr('id');
                let courseName = $(this).text();
                if (!courseName) {
                    courseName = $(this).next().children(":first").text();
                }
-               courseInfo = {courseId, courseName};
-               loadResources(courseInfo);
-               functions.push(loadCourses);
-               currentState++;
+               loadCourse({courseId, courseName});
            });
         },
         error: function (e) {
-            $('#courses').html(`<a href="${endpoint}/d2l/login" target="_blank">Could not login. Click here to log in.</a>`);
+            $('#home').html(`<a href="${endpoint}/d2l/login" target="_blank">Could not login. Click here to log in.</a>`);
             console.log("Error: Not a valid URL.");
         }
     });
 }
 
-function loadResources(courseInfo) {
-    showDiv('resources');
+function loadCourse(courseInfo) {
+    showDiv('course');
+    $('#homeHeader').hide();
+    $('#courseHeader').show();
     $('#title').html(courseInfo.courseName);
     $('#title').attr('href', `${endpoint}/d2l/home/${courseInfo.courseId}`);
-    for (let i=0; i<resources.length; i++) {
-        $('#resources').append(`<button id="${i}">${resources[i]}</button>`);
-    }
-    $('button').click(function() {
-        let resourceId = $(this).attr('id');
-        resourceFns[resourceId](courseInfo);
-        functions.push(loadResources);
-        currentState++;
+    $.ajax({
+        url: `${endpoint}/d2l/api/lp/${lpVersion}/enrollments/myenrollments/${courseInfo.courseId}`,
+        dataType: "json",
+        success: function(data) {
+            let image = data.OrgUnit.ImageUrl || "https://d2q79iu7y748jz.cloudfront.net/s/_logo/2b6d922805d2214befee400b8bb5de7f.png";
+            $('#header').css('background-image', `url("${image}")`);
+            $('#header').css('width', window.innerWidth);
+            $('#header').css('height', window.innerWidth/2.32);
+        },
+        error: function (e) {
+            console.log("Error: Not a valid URL.");
+        }
     });
+    for (let i=0; i<resources.length; i++) {
+        $('#course').append(`<button id="${i}">${resources[i]}</button>`);
+    }
 }
 
 function displayCachedTopics(courseInfo) {

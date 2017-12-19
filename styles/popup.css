@@ -1,9 +1,11 @@
 body {
 	width: 450px;
-	min-height: 500px;
+	min-height: 620px;
 }
 
 .header {
+	display: flex;
+	justify-content: space-between;
 	border-bottom: 1px solid black;
 }
 
@@ -14,4 +16,12 @@ body {
 .extLink {
 	display: flex;
 	justify-content: space-between;
+}
+
+.setting {
+	margin-top: 20px;
+}
+
+.input {
+	width: 250px;
 }

@@ -1,4 +1,5 @@
-let endpoint = 'https://d2llabs.desire2learn.com';
+let endpoint = localStorage["quickerLinks.domain"];
+// let endpoint = 'https://d2llabs.desire2learn.com';
 // let endpoint = 'https://learn.uwaterloo.ca';
 let leVersion = '1.24';
 let lpVersion = '1.20';
@@ -10,26 +11,10 @@ let breadcrumbs = ['Courses', 'Resources'];
 let currentState = 0;
 let courseInfo = {};
 let functions = [];
-let pinnedOnly = true;
 
 $(document).ready(function() {
     createDivs();
-    loadCourses();
-    $(document).on('click', '#breadcrumb li', function() {
-        let newState = parseInt($(this).attr('id').substring(2));
-        if (currentState !== newState) {
-            $('#breadcrumb').empty();
-            for (let i=0; i<newState; i++) {
-                $('#breadcrumb').append(`<li id="bc${i}"><a href="#">${breadcrumbs[i]}</a></li>`);
-            }
-            if ($('#breadcrumb').has($('#bc1'))) {
-                $('#bc1 a').html(courseInfo.courseName);
-            }
-            functions[newState](courseInfo);
-            functions.splice(newState);
-            currentState = newState;
-        }
-    });
+    endpoint ? loadCourses() : $('#courses').html(`<a href="settings.html">No domain has been chosen yet. Click here.</a>`);
 });
 
 function createDivs() {
@@ -48,14 +33,13 @@ function loadCourses() {
             let courses = data.Items;
             let domainName = courses.filter(course => course.OrgUnit.Type.Id === 1)[0].OrgUnit.Name;
             $('#title').html(domainName);
-            let pinnedCourses = courses.filter(course => (!pinnedOnly || course.PinDate)).filter(course => course.OrgUnit.Type.Id === 3);
+            let pinnedCourses = courses.filter(course => (!(localStorage["quickerLinks.pinnedOnly"]==='true') || course.PinDate)).filter(course => course.OrgUnit.Type.Id === 3);
             let numRows = pinnedCourses.length / 2 + 1;
 
             // Two courses take up one row.
             for (var i = 0; i < numRows; i++) {
                 $("#courses").append("<div class=\"row\"></div>")
             }
-            $('#breadcrumb').append('<li id="bc0">Courses</li>');
             // Appends to cols of width 6 to every row.
             $(".row").append("<div class=\"col-xs-6\"> </div>")
             $(".row").append("<div class=\"col-xs-6\"> </div>")
@@ -107,8 +91,6 @@ function loadResources(courseInfo) {
         functions.push(loadResources);
         currentState++;
     });
-    $('#breadcrumb').append(`<li id="bc1">${courseInfo.courseName}</li>`);
-    $('#bc0').html(`<a href="#">${$('#bc0').html()}</a>`);
 }
 
 function loadModules(courseInfo) {
@@ -134,8 +116,6 @@ function loadModules(courseInfo) {
                     currentState++;
                 });
             }
-            $('#breadcrumb').append('<li id="bc2">Content</li>');
-            $('#bc1').html(`<a href="#">${$('#bc1').html()}</a>`);
         },
         error: function (e) {
             console.log("Error: Not a valid URL.");
@@ -158,8 +138,6 @@ function loadAnnouncements(courseInfo) {
             if (announcements.length === 0) {
                 $('#announcements').html('There are no announcements in this course.');
             }
-            $('#breadcrumb').append('<li id="bc2">Announcements</li>');
-            $('#bc1').html(`<a href="#">${$('#bc1').html()}</a>`);
         },
         error: function (e) {
             console.log("Error: Not a valid URL.");
@@ -180,8 +158,6 @@ function loadGrades(courseInfo) {
             if (grades.length === 0) {
                 $('#grades').html('There are no grades in this course.');
             }
-            $('#breadcrumb').append('<li id="bc2">Grades</li>');
-            $('#bc1').html(`<a href="#">${$('#bc1').html()}</a>`);
         },
         error: function (e) {
             console.log("Error: Not a valid URL.");
@@ -204,8 +180,6 @@ function loadTopics(courseInfo, moduleInfo) {
     if (topics.length === 0) {
         $('#topics').html('There are no topics in this module.');
     }
-    $('#breadcrumb').append('<li id="bc3">Topics</li>');
-    $('#bc2').html(`<a href="#">${$('#bc2').html()}</a>`);
 }
 
 function showDiv(id) {

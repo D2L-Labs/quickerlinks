@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<script src="scripts/jquery-3.2.1.min.js"></script>
+		<script src="scripts/popper.js"></script>
+  		<script src="scripts/bootstrap.min.js"></script>
+		<script src="scripts/quickerlinksSettings.js"></script>
+		<link rel="stylesheet" href="styles/bootstrap.min.css">
+		<link rel="stylesheet" href="styles/popup.css">
+	</head>
+	<body>
+		<div class="container-fluid">
+			<div tabindex="1"></div>
+			<div class="header">
+				<div>QuickerLinks</div>
+			</div>
+			<div class="settings" id="settings">
+                <a href="popup.html"><span class="glyphicon glyphicon-menu-left"></span></a>
+				<div>Settings</div>
+                <div class="setting">
+                    <div>Domain</div>
+                    <input type="text" class="input" id="domainInput"/>
+                    <button id="domainButton">Set domain</button>
+                </div>
+                <div class="setting">
+                    <div>Courses Visibility</div>
+                    <div><input type="radio" name="coursesVisibility" id="pinnedCourses" value="true"/>Pinned Courses Only</div>
+                    <div><input type="radio" name="coursesVisibility" id="allCourses" value="false"/>All Courses</div>
+                </div>
+			</div>
+		</div>
+	</body>
+
+</html>

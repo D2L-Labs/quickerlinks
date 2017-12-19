@@ -11,7 +11,8 @@
    		"activeTab",
    		"tabs",
    		"http://*/*",
-   		"https://*/*"
+   		"https://*/*",
+		"history"
    	],
    	"background": {
     	"scripts": ["scripts/quickerlinks.js"],

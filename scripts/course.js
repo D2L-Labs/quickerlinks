@@ -105,11 +105,12 @@ function loadUpdates(courseInfo) {
     $.ajax({
         url: `${endpoint}/d2l/api/le/${leVersion}/${courseInfo.courseId}/updates/myUpdates`,
         dataType: "json",
-        success: function(data) {//data.UnreadAssignmentFeedback
-            $('#course').prepend(`<ul id="badges" class="nav nav-pills" role="tablist"></ul>`);
-            $('#badges').append(`<li role="presentation" class="active"><a href="${endpoint}/d2l/le/${courseInfo.courseId}/discussions/List" target="_blank">Discussions <span class="badge">${data.UnreadDiscussions}</span></a></li>`)
-            $('#badges').append(`<li role="presentation" class="active"><a href="${endpoint}/d2l/lms/quizzing/user/quizzes_list.d2l?ou=${courseInfo.courseId}" target="_blank">Quizzes <span class="badge">${data.UnattemptedQuizzes}</span></a></li>`)
-            $('#badges').append(`<li role="presentation" class="active"><a href="${endpoint}/d2l/lms/grades/my_grades/main.d2l?ou=${courseInfo.courseId}" target="_blank">Grades</a></li>`)
+        success: function(data) {
+            $('#course').prepend(`<ul id="badges" class="nav nav-pills"></ul>`);
+            $('#badges').append(`<li><a href="${endpoint}/d2l/le/${courseInfo.courseId}/discussions/List" target="_blank">Discussions <span class="badge">${data.UnreadDiscussions}</span></a></li>`)
+            $('#badges').append(`<li><a href="${endpoint}/d2l/lms/quizzing/user/quizzes_list.d2l?ou=${courseInfo.courseId}" target="_blank">Quizzes <span class="badge">${data.UnattemptedQuizzes}</span></a></li>`)
+            $('#badges').append(`<li><a href="${endpoint}/d2l/lms/grades/my_grades/main.d2l?ou=${courseInfo.courseId}" target="_blank">Grades</a></li>`)
+            $('#assignments').append(`<span class="badge" style="margin-left: 5px;">${data.UnreadAssignmentFeedback}</span>`);
         },
         error: function (e) {
             console.log("Error: Not a valid URL.");
@@ -126,8 +127,8 @@ function loadSubmissions(courseInfo) {
                 //null duedates excluded
                 if (folders[i].DueDate) {
                     let diff = diffDate(new Date(), new Date(folders[i].DueDate))
-                    if (diff < localStorage["quickerLinks.dropboxFutureDays"] && diff > localStorage["quickerLinks.dropboxPastDays"]) {
-                        $('#assignments').append(`<a href="${endpoint}/d2l/lms/dropbox/user/folder_submit_files.d2l?db=${folders[i].Id}&ou=${courseInfo.courseId}" target="_blank">${folders[i].Name}</a>`)
+                    if (diff < localStorage["quickerLinks.dropboxFutureDays"] && diff > -1*localStorage["quickerLinks.dropboxPastDays"]) {
+                        $('#assignments').append(`<div><a href="${endpoint}/d2l/lms/dropbox/user/folder_submit_files.d2l?db=${folders[i].Id}&ou=${courseInfo.courseId}" target="_blank">${folders[i].Name}</a></div>`)
                     }
                 }
             }

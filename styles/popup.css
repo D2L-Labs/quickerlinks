@@ -35,6 +35,12 @@ body {
 	margin-top: 20px;
 }
 
+.subheading {
+	margin-top: 20px;
+	margin-bottom: 10px;
+	font-size: 130%;
+}
+
 .notification {
 	border: 2px solid #e87511;
 	color: #e87511;

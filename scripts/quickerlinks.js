@@ -40,13 +40,28 @@ function loadCourses() {
                     // Set to default
                     image = "https://d2q79iu7y748jz.cloudfront.net/s/_logo/2b6d922805d2214befee400b8bb5de7f.png"
                 }
-                $(this).append(`<div class=courseInfo>
+                $(this).append(`<div class="courseInfo">
+                                    <div class="dropdown show">
+                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <div class="ellipses">
+                                            <svg viewBox="0 0 18 18" preserveAspectRatio="xMidYMid meet" focusable="false" style="pointer-events: none; display: block; width: 80%; height: 80%;">
+                                            <g class="style-scope d2l-icon">
+                                                <path d="M2,7 C0.895,7 0,7.895 0,9 C0,10.105 0.895,11 2,11 C3.105,11 4,10.105 4,9 C4,7.895 3.105,7 2,7 Z M16,7 C14.895,7 14,7.895 14,9 C14,10.105 14.895,11 16,11 C17.105,11 18,10.105 18,9 C18,7.895 17.105,7 16,7 Z M9,7 C7.895,7 7,7.895 7,9 C7,10.105 7.895,11 9,11 C10.105,11 11,10.105 11,9 C11,7.895 10.105,7 9,7 Z">
+                                                </path>
+                                            </g>
+                                            </svg>
+                                        </div>
+                                        </a>
+                                        <ul class="dropdown-menu menu">
+                                            <li><a class="dropdown-item" href="${endpoint}/d2l/home/${id}" target="_blank">Go to course</a></li>
+                                        </ul>
+                                    </div>
                                     <a href="course.html?ou=${id}&name=${title}" id="${id}"><img src="${image}" height="87" width="200"/></a>
                                     <div class="extLink">
                                         <a href="#" id="${id}" class="name">${title}</a>
                                     </div>
                                 </div>`);
-                let updateParent = $(this).children('div').children('div');
+                let updateParent = $(this).children('div').children('.extLink');
                 $.ajax({
                     url: `${endpoint}/d2l/api/le/1.24/${id}/updates/myUpdates`,
                     success: function (d) {
@@ -62,11 +77,6 @@ function loadCourses() {
                     }
                 });
             })
-            $('#home a').click(function() {
-               let courseId = $(this).attr('id');
-               let courseName = $(this).text() || $(this).next().children(":first").text();
-               loadCourse({courseId, courseName});
-           });
         },
         error: function (e) {
             $('#home').html(`<a href="${endpoint}/d2l/login" target="_blank">Could not login. Click here to log in.</a>`);

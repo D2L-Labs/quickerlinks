@@ -12,7 +12,8 @@
    		"tabs",
    		"http://*/*",
    		"https://*/*",
-		"history"
+		"history",
+		"tabs"
    	],
 	"background": {
     	"scripts": ["scripts/quickerlinks.js", "scripts/course.js"],

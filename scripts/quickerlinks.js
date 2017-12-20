@@ -6,8 +6,49 @@ let lpVersion = '1.20';
 let defaultFutureDays = 4;
 let defaultPastDays = -3;
 
+function inferEndpointFromTabs() {
+    let getWindows = new Promise(function(resolve, reject) {
+         chrome.windows.getAll(function(data) {
+             resolve(data)
+         });
+     })
+
+    getWindows.then(function(windows) {
+        let getAllTabs = windows.map(function (w) {
+            return new Promise(function(resolve, reject) {
+                chrome.tabs.query({windowId: w.id}, function (tabs) {
+                    resolve(tabs)
+                })
+            });
+        })
+        return Promise.all(getAllTabs)
+    }).then(function (tabs) {
+        tabs = tabs.reduce(function (a1, a2) { return a1.concat(a2) }) // Flatten array
+        tabs = tabs.filter(function (tab) { return ~tab.url.indexOf('/d2l/') })
+        if (tabs.length) {
+            localStorage["quickerLinks.domain"] = 'https://' + tabs[0].url.split('/')[2]
+        }
+        endpoint = localStorage["quickerLinks.domain"];
+        $.ajax({
+            url: `${endpoint}/d2l/api/lp/${lpVersion}/users/whoami`,
+            success: function (response) {
+                loadCourses();
+            },
+            error: function () {
+                $('#home').html(`<a href="settings.html">No domain has been set yet. Click here.</a>`);
+            }
+        })
+    })
+}
+
 $(document).ready(function() {
-    endpoint ? loadCourses() : $('#home').html(`<a href="settings.html">No domain has been chosen yet. Click here.</a>`);
+    if (!endpoint) {
+        inferEndpointFromTabs()
+    } else {
+        loadCourses()        
+    }
+
+
     if (isNaN(localStorage["quickerLinks.dropboxPastDays"])) {
         localStorage["quickerLinks.dropboxPastDays"] = defaultPastDays;
     }
@@ -81,6 +122,7 @@ function loadCourses() {
                         }
                     },
                     error: function (e) {
+                         console.log(e)
                         console.log('There was an error when retrieving the data')
                     }
                 });

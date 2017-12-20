@@ -43,9 +43,9 @@ function inferEndpointFromTabs() {
 
 $(document).ready(function() {
     if (!endpoint) {
-        inferEndpointFromTabs()
+        inferEndpointFromTabs();
     } else {
-        loadCourses()        
+        loadCourses();
     }
 
 

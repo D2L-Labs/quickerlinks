@@ -1,7 +1,6 @@
 let endpoint = localStorage["quickerLinks.domain"];
 let leVersion = '1.24';
 let lpVersion = '1.20';
-let badges = ['Discussions', 'Quizzes', 'Grades'];
 let topicsCache = null;
 
 $(document).ready(function() {
@@ -11,8 +10,6 @@ $(document).ready(function() {
     let courseId = window.location.search.substring(courseStart + 3, nameStart - 1);
     let courseName = window.location.search.substring(nameStart + 5).replace(new RegExp('%20', 'g'), ' ')
     let courseInfo = {courseId, courseName}
-    $('#course').append(`<div id="assignments">Assignments</div>`);
-    $('#course').append(`<div id="recentContent">Recent Content</div>`);
     loadCourse(courseInfo)
     $('#back').click(function() {
         window.location.href = 'popup.html'
@@ -32,6 +29,7 @@ function loadCourse(courseInfo) {
             $('#courseHeader').css('width', window.innerWidth);
             $('#courseHeader').css('height', window.innerWidth/2.32);
             loadUpdates(courseInfo);
+            loadSubmissions(courseInfo);
             loadContent(courseInfo);
         },
         error: function (e) {
@@ -108,10 +106,31 @@ function loadUpdates(courseInfo) {
         url: `${endpoint}/d2l/api/le/${leVersion}/${courseInfo.courseId}/updates/myUpdates`,
         dataType: "json",
         success: function(data) {
-            let unreadData = [data.UnreadDiscussions, data.UnreadAssignmentFeedback, data.UnattemptedQuizzes];
-            $('#course').prepend(`<ul id="badges" class="nav nav-pills" role="tablist"></ul>`);
-            for (let i=0; i<badges.length; i++) {
-                $('#badges').append(`<li role="presentation" class="active"><a href="#">${badges[i]} <span class="badge">${unreadData[i]}</span></a></li>`)
+            $('#course').prepend(`<ul id="badges" class="nav nav-pills"></ul>`);
+            $('#badges').append(`<li><a href="${endpoint}/d2l/le/${courseInfo.courseId}/discussions/List" target="_blank">Discussions <span class="badge">${data.UnreadDiscussions}</span></a></li>`)
+            $('#badges').append(`<li><a href="${endpoint}/d2l/lms/quizzing/user/quizzes_list.d2l?ou=${courseInfo.courseId}" target="_blank">Quizzes <span class="badge">${data.UnattemptedQuizzes}</span></a></li>`)
+            $('#badges').append(`<li><a href="${endpoint}/d2l/lms/grades/my_grades/main.d2l?ou=${courseInfo.courseId}" target="_blank">Grades</a></li>`)
+            $('#assignments').append(`<span class="badge" style="margin-left: 5px;">${data.UnreadAssignmentFeedback}</span>`);
+        },
+        error: function (e) {
+            console.log("Error: Not a valid URL.");
+        }
+    });
+}
+
+function loadSubmissions(courseInfo) {
+    $.ajax({
+        url: `${endpoint}/d2l/api/le/${leVersion}/${courseInfo.courseId}/dropbox/folders/`,
+        dataType: "json",
+        success: function(folders) {
+            for (let i=0; i<folders.length; i++) {
+                //null duedates excluded
+                if (folders[i].DueDate) {
+                    let diff = diffDate(new Date(), new Date(folders[i].DueDate))
+                    if (diff < localStorage["quickerLinks.dropboxFutureDays"] && diff > -1*localStorage["quickerLinks.dropboxPastDays"]) {
+                        $('#assignments').append(`<div><a href="${endpoint}/d2l/lms/dropbox/user/folder_submit_files.d2l?db=${folders[i].Id}&ou=${courseInfo.courseId}" target="_blank">${folders[i].Name}</a></div>`)
+                    }
+                }
             }
         },
         error: function (e) {
@@ -178,3 +197,7 @@ function loadUpdates(courseInfo) {
 //         $('#topics').html('There are no topics in this module.');
 //     }
 // }
+
+function diffDate(date1, date2) {
+    return Math.round((date2.getTime() - date1.getTime())/86400000);
+}

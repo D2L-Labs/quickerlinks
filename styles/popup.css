@@ -35,8 +35,10 @@ body {
 	margin-top: 20px;
 }
 
-.input {
-	width: 250px;
+.subheading {
+	margin-top: 20px;
+	margin-bottom: 10px;
+	font-size: 130%;
 }
 
 .notification {

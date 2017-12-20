@@ -27,4 +27,11 @@ $(document).ready(function() {
     $('input[name=coursesVisibility]').click(function() {
         localStorage.setItem("quickerLinks.pinnedOnly", ($('input[name=coursesVisibility]:checked').val() == 'true'));
     });
+
+    $('#pastRangeInput').attr('placeholder', -1*localStorage["quickerLinks.dropboxPastDays"]);
+    $('#futureRangeInput').attr('placeholder', localStorage["quickerLinks.dropboxFutureDays"]);
+    $('#rangeButton').click(function() {
+        localStorage["quickerLinks.dropboxPastDays"] = $('#pastRangeInput').val();
+        localStorage["quickerLinks.dropboxFutureDays"] = $('#futureRangeInput').val();
+    });
 });

@@ -3,9 +3,17 @@ let endpoint = localStorage["quickerLinks.domain"];
 // let endpoint = 'https://learn.uwaterloo.ca';
 let leVersion = '1.24';
 let lpVersion = '1.20';
+let defaultFutureDays = 4;
+let defaultPastDays = -3;
 
 $(document).ready(function() {
     endpoint ? loadCourses() : $('#home').html(`<a href="settings.html">No domain has been chosen yet. Click here.</a>`);
+    if (isNaN(localStorage["quickerLinks.dropboxPastDays"])) {
+        localStorage["quickerLinks.dropboxPastDays"] = defaultPastDays;
+    }
+    if (isNaN(localStorage["quickerLinks.dropboxFutureDays"])) {
+        localStorage["quickerLinks.dropboxFutureDays"] = defaultFutureDays;
+    }
 });
 
 function loadCourses() {

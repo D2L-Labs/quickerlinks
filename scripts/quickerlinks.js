@@ -106,11 +106,11 @@ function loadCourses() {
             for (var i = 0; i < numRows; i++) {
                 $("#home").append("<div class=\"row\"></div>")
             }
-            // Appends to cols of width 6 to every row.
+            // Appends two cols of width 6 to every row.
             $(".row").append("<div class=\"col-xs-6\"> </div>")
             $(".row").append("<div class=\"col-xs-6\"> </div>")
 
-            // Append card to every column
+            // Append course to every column
             $(".col-xs-6").each(function (index) {
                 if (index >= pinnedCourses.length) return;
 
@@ -138,7 +138,9 @@ function loadCourses() {
                                             <li><a class="dropdown-item" href="${endpoint}/d2l/home/${id}" target="_blank">Go to course</a></li>
                                         </ul>
                                     </div>
-                                    <a href="course.html?ou=${id}&name=${title}" id="${id}"><img src="${image}" height="87" width="200"/></a>
+                                    <a href="course.html?ou=${id}&name=${title}" id="${id}">
+                                        <img src="${image}" height="87" width="200" class="courseImage"/>
+                                    </a>
                                     <div class="extLink">
                                         <a href="course.html?ou=${id}&name=${title}" id="${id}" class="name">${title}</a>
                                     </div>

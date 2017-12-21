@@ -16,7 +16,21 @@ body {
 	color: #FFFFFF;
 }
 
+.subheading {
+	margin-top: 20px;
+	margin-bottom: 10px;
+	font-size: 130%;
+}
+
+.contentItem {
+	font-size: 70%;
+}
+
 .headerGlyphicons, .title {
 	margin-top: 10px;
     font-size: 180%;
+}
+
+#back:hover {
+	cursor:pointer;
 }

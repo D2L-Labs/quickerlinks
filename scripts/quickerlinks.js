@@ -6,6 +6,23 @@ let lpVersion = '1.20';
 let defaultFutureDays = 4;
 let defaultPastDays = -3;
 
+chrome.omnibox.onInputEntered.addListener(function (text) {
+    if (localStorage["quickerLinks.userId"] === undefined) {
+        alert('No user detected. Log in and check the extension to verify, then try again.')
+    }
+    else {
+        if (text === 'config') {
+            alert('config')
+        }
+        else if (text === 'users') {
+            alert('users')
+        }
+        else if (text === 'sel') {
+            alert('sel')
+        }
+    }
+});
+
 $(document).ready(function() {
     endpoint ? loadCourses() : $('#home').html(`<a href="settings.html">No domain has been chosen yet. Click here.</a>`);
     if (isNaN(localStorage["quickerLinks.dropboxPastDays"])) {
@@ -13,6 +30,18 @@ $(document).ready(function() {
     }
     if (isNaN(localStorage["quickerLinks.dropboxFutureDays"])) {
         localStorage["quickerLinks.dropboxFutureDays"] = defaultFutureDays;
+    }
+    if (localStorage["quickerLinks.userId"] === undefined) {
+        $.ajax({
+            url: `${endpoint}/d2l/api/lp/${lpVersion}/users/whoami`,
+            dataType: "json",
+            success: function(whoami) {
+                localStorage["quickerLinks.userId"] = whoami.Identifier;
+            },
+            error: function (e) {
+                console.log("Error: Not a valid URL.");
+            }
+        });
     }
 });
 
@@ -51,7 +80,7 @@ function loadCourses() {
                 $(this).append(`<div class=courseInfo>
                                     <a href="course.html?ou=${id}&name=${title}" id="${id}"><img src="${image}" height="87" width="200"/></a>
                                     <div class="extLink">
-                                        <a href="#" id="${id}" class="name">${title}</a>
+                                        <a href="course.html?ou=${id}&name=${title}" id="${id}" class="name">${title}</a>
                                     </div>
                                 </div>`);
                 let updateParent = $(this).children('div').children('div');

@@ -41,7 +41,7 @@ function loadCourse(courseInfo) {
 function loadContent(courseInfo) {
     if (!topicsCache) { // If topics cache has not been made then make it
         topicsCache = {}
-        chrome.history.search({text: ''}, function (data) {
+        chrome.history.search({text: 'd2l'}, function (data) {
             data.filter(function (item) {
                 return ~item.url.indexOf(endpoint) && ~item.url.indexOf('viewContent')
             }).forEach(function (historyItem) {
@@ -94,10 +94,10 @@ function displayCachedTopics(courseInfo) {
     $('#recentContent').append('<div id="recentView"></div>')
     if (topicsCache[courseInfo.courseId]) { // If there are any available links for this org unit
         topicsCache[courseInfo.courseId].forEach(function (historyItem) {
-            $('#recentContent').children('#recentView').append(`<a href="${historyItem.url}" target="_blank">${historyItem.title}</a> <br/>`)
+            $('#recentContent').children('#recentView').append(`<div class="contentItem"><a href="${historyItem.url}" target="_blank">${historyItem.title}</a></div>`)
         })
     } else { // else display no recently visited topics message
-        $('#recentContent').children('#recentView').append("<p> No recently viewed links from this course </p>")
+        $('#recentContent').children('#recentView').append(`<div class="contentItem">No recently viewed links from this course</div>`);
     }
 }
 
@@ -110,7 +110,7 @@ function loadUpdates(courseInfo) {
             $('#badges').append(`<li><a href="${endpoint}/d2l/le/${courseInfo.courseId}/discussions/List" target="_blank">Discussions <span class="badge">${data.UnreadDiscussions}</span></a></li>`)
             $('#badges').append(`<li><a href="${endpoint}/d2l/lms/quizzing/user/quizzes_list.d2l?ou=${courseInfo.courseId}" target="_blank">Quizzes <span class="badge">${data.UnattemptedQuizzes}</span></a></li>`)
             $('#badges').append(`<li><a href="${endpoint}/d2l/lms/grades/my_grades/main.d2l?ou=${courseInfo.courseId}" target="_blank">Grades</a></li>`)
-            $('#assignments').append(`<span class="badge" style="margin-left: 5px;">${data.UnreadAssignmentFeedback}</span>`);
+            $('#feedback').html(`Feedback <span class="badge" style="margin-left: 5px;">${data.UnreadAssignmentFeedback}</span>`);
         },
         error: function (e) {
             console.log("Error: Not a valid URL.");
@@ -123,14 +123,19 @@ function loadSubmissions(courseInfo) {
         url: `${endpoint}/d2l/api/le/${leVersion}/${courseInfo.courseId}/dropbox/folders/`,
         dataType: "json",
         success: function(folders) {
+            let foundAssignments = false;
             for (let i=0; i<folders.length; i++) {
                 //null duedates excluded
                 if (folders[i].DueDate) {
                     let diff = diffDate(new Date(), new Date(folders[i].DueDate))
                     if (diff < localStorage["quickerLinks.dropboxFutureDays"] && diff > -1*localStorage["quickerLinks.dropboxPastDays"]) {
-                        $('#assignments').append(`<div><a href="${endpoint}/d2l/lms/dropbox/user/folder_submit_files.d2l?db=${folders[i].Id}&ou=${courseInfo.courseId}" target="_blank">${folders[i].Name}</a></div>`)
+                        $('#assignments').append(`<div class="contentItem"><a href="${endpoint}/d2l/lms/dropbox/user/folder_submit_files.d2l?db=${folders[i].Id}&ou=${courseInfo.courseId}" target="_blank">${folders[i].Name}</a></div>`)
+                        foundAssignments = true;
                     }
                 }
+            }
+            if (!foundAssignments) {
+                $('#assignments').append(`<div class="contentItem">No assignments found in specified date range.</div>`)
             }
         },
         error: function (e) {

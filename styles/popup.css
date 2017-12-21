@@ -41,6 +41,10 @@ body {
 	font-size: 130%;
 }
 
+.contentItem {
+	font-size: 70%;
+}
+
 .notification {
 	border: 2px solid #e87511;
 	color: #e87511;

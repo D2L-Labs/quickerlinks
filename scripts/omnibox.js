@@ -96,6 +96,7 @@ chrome.omnibox.onInputChanged.addListener( function(text, suggest) {
 });
 
 chrome.omnibox.onInputEntered.addListener (function(text) {
+    /*
     if (localStorage["quickerLinks.isAdmin"] === 'true') {
         if (command === 'config') {
           chrome.tabs.update({ url: `${localStorage["quickerLinks.domain"]}/d2l/lp/configVariableBrowser` });
@@ -109,4 +110,10 @@ chrome.omnibox.onInputEntered.addListener (function(text) {
     }
     else {
         alert(`Access denied. Not an admin for ${endpoint}`);
+    */
+    let newTabProperties = {
+        url: text,
+        active: true
+    }
+    chrome.tabs.create(newTabProperties)
 });

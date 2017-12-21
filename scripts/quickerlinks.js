@@ -6,6 +6,7 @@ let lpVersion = '1.20';
 let defaultFutureDays = 4;
 let defaultPastDays = -3;
 
+
 chrome.omnibox.onInputEntered.addListener(function (text) {
     if (localStorage["quickerLinks.userId"] === undefined) {
         alert('No user detected. Log in and check the extension to verify, then try again.')
@@ -102,11 +103,11 @@ function loadCourses() {
             for (var i = 0; i < numRows; i++) {
                 $("#home").append("<div class=\"row\"></div>")
             }
-            // Appends to cols of width 6 to every row.
+            // Appends two cols of width 6 to every row.
             $(".row").append("<div class=\"col-xs-6\"> </div>")
             $(".row").append("<div class=\"col-xs-6\"> </div>")
 
-            // Append card to every column
+            // Append course to every column
             $(".col-xs-6").each(function (index) {
                 if (index >= pinnedCourses.length) return;
 

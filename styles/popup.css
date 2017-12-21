@@ -3,22 +3,13 @@ body {
 	min-height: 620px;
 }
 
-.spaceBetween {
-	display: flex;
-	justify-content: space-between;
-}
-
-.courseTitle {
-	margin-top: 110px;
-}
-
-.courseHeader div a {
-	color: #FFFFFF;
+.myCourses {
+	color:#565a5c;
+	margin-left: 10px
 }
 
 .headerGlyphicons, .title {
-	margin-top: 10px;
-    font-size: 180%;
+	font-size: 180%;
 }
 
 .row {
@@ -31,18 +22,13 @@ body {
 	padding-top: .25rem
 }
 
+.extLink a {
+	margin-top: .5rem;
+	color: #565a5c
+}
+
 .setting {
 	margin-top: 20px;
-}
-
-.subheading {
-	margin-top: 20px;
-	margin-bottom: 10px;
-	font-size: 130%;
-}
-
-.contentItem {
-	font-size: 70%;
 }
 
 .notification {
@@ -62,11 +48,6 @@ body {
 
 .courseInfo {
 	padding-top: 1rem;
-}
-
-.name {
-	margin-top: .5rem;
-	color: #565a5c
 }
 
 .homeHeader {
@@ -99,11 +80,6 @@ body {
 	cursor: pointer;
 }
 
-.myCourses {
-	color:#565a5c;
-	margin-left: 10px
-}
-
 .settingsIcon {
 	margin-top: 5px;
 	margin-left: 200px;
@@ -116,8 +92,4 @@ body {
 .courseImage {
 	border-top-right-radius: 7px;
 	border-top-left-radius: 7px
-}
-
-#back:hover {
-	cursor:pointer;
 }

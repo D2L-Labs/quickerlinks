@@ -66,16 +66,12 @@ body {
 
 .name {
 	margin-top: .5rem;
+	color: #565a5c
 }
 
 .homeHeader {
 	display: flex;
 }
-
-/*.homeHeader a {
-	font-size: 180%;
-	margin-top: auto;
-}*/
 
 .ellipses {
 	opacity: 0;
@@ -101,6 +97,25 @@ body {
 	opacity: 1;
 	background: rgba(0,0,0,.5);
 	cursor: pointer;
+}
+
+.myCourses {
+	color:#565a5c;
+	margin-left: 10px
+}
+
+.settingsIcon {
+	margin-top: 5px;
+	margin-left: 200px;
+}
+
+.settingsIcon span {
+	color:#565a5c;
+}
+
+.courseImage {
+	border-top-right-radius: 7px;
+	border-top-left-radius: 7px
 }
 
 #back:hover {

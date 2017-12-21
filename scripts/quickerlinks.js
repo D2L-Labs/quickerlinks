@@ -134,7 +134,9 @@ function loadCourses() {
                                             <li><a class="dropdown-item" href="${endpoint}/d2l/home/${id}" target="_blank">Go to course</a></li>
                                         </ul>
                                     </div>
-                                    <a href="course.html?ou=${id}&name=${title}" id="${id}"><img src="${image}" height="87" width="200"/></a>
+                                    <a href="course.html?ou=${id}&name=${title}" id="${id}">
+                                        <img src="${image}" height="87" width="200" class="courseImage"/>
+                                    </a>
                                     <div class="extLink">
                                         <a href="course.html?ou=${id}&name=${title}" id="${id}" class="name">${title}</a>
                                     </div>

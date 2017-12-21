@@ -1,34 +1,66 @@
 let endpoint = localStorage["quickerLinks.domain"];
-// let endpoint = 'https://d2llabs.desire2learn.com';
-// let endpoint = 'https://learn.uwaterloo.ca';
 let leVersion = '1.24';
 let lpVersion = '1.20';
 let defaultFutureDays = 4;
 let defaultPastDays = -3;
 
-chrome.omnibox.onInputEntered.addListener(function (text) {
-    if (localStorage["quickerLinks.userId"] === undefined) {
-        alert('No user detected. Log in and check the extension to verify, then try again.')
+chrome.omnibox.onInputEntered.addListener(function (command) {
+    if (localStorage["quickerLinks.isAdmin"] === 'true') {
+        if (command === 'config') {
+            chrome.tabs.update({ url: `${endpoint}/d2l/lp/configVariableBrowser` });
+        }
+        else if (command === 'users') {
+            chrome.tabs.update({ url: `${endpoint}/d2l/lp/manageUsers/main.d2l?ou=${localStorage["quickerLinks.domainId"]}` });
+        }
+        else if (command === 'sel') {
+            chrome.tabs.update({ url: `${endpoint}/d2l/logging` });
+        }
     }
     else {
-        if (text === 'config') {
-            alert('config')
-        }
-        else if (text === 'users') {
-            alert('users')
-        }
-        else if (text === 'sel') {
-            alert('sel')
-        }
+        alert(`Access denied. Not an admin for ${endpoint}`);
     }
 });
+
+$(document).ready(function() {
+    if (!endpoint) {
+        inferEndpointFromTabs();
+    } else {
+        loadCourses();
+    }
+    checkIfAdmin();
+    if (isNaN(localStorage["quickerLinks.dropboxPastDays"])) {
+        localStorage["quickerLinks.dropboxPastDays"] = defaultPastDays;
+    }
+    if (isNaN(localStorage["quickerLinks.dropboxFutureDays"])) {
+        localStorage["quickerLinks.dropboxFutureDays"] = defaultFutureDays;
+    }
+});
+
+function checkIfAdmin() {
+    $.ajax({
+        url: `${endpoint}/d2l/api/lp/${lpVersion}/enrollments/myenrollments/?OrgUnitTypeId=1`,
+        dataType: 'json',
+        success: function (myenrollments) {
+            if (myenrollments.Items[0].Access.LISRoles.includes("urn:lti:instrole:ims/lis/Administrator")) {
+                localStorage["quickerLinks.isAdmin"] = 'true';
+                localStorage["quickerLinks.domainId"] = myenrollments.Items[0].OrgUnit.Id;
+            }
+            else {
+                localStorage["quickerLinks.isAdmin"] = 'false';
+            }
+        },
+        error: function () {
+            console.log("Error: Not a valid URL.");
+        }
+    });
+}
 
 function inferEndpointFromTabs() {
     let getWindows = new Promise(function(resolve, reject) {
          chrome.windows.getAll(function(data) {
-             resolve(data)
+             resolve(data);
          });
-     })
+     });
 
     getWindows.then(function(windows) {
         let getAllTabs = windows.map(function (w) {
@@ -37,7 +69,7 @@ function inferEndpointFromTabs() {
                     resolve(tabs)
                 })
             });
-        })
+        });
         return Promise.all(getAllTabs)
     }).then(function (tabs) {
         tabs = tabs.reduce(function (a1, a2) { return a1.concat(a2) }) // Flatten array
@@ -54,37 +86,9 @@ function inferEndpointFromTabs() {
             error: function () {
                 $('#home').html(`<a href="settings.html">No domain has been set yet. Click here.</a>`);
             }
-        })
-    })
-}
-
-$(document).ready(function() {
-    if (!endpoint) {
-        inferEndpointFromTabs();
-    } else {
-        loadCourses();
-    }
-
-
-    if (isNaN(localStorage["quickerLinks.dropboxPastDays"])) {
-        localStorage["quickerLinks.dropboxPastDays"] = defaultPastDays;
-    }
-    if (isNaN(localStorage["quickerLinks.dropboxFutureDays"])) {
-        localStorage["quickerLinks.dropboxFutureDays"] = defaultFutureDays;
-    }
-    if (localStorage["quickerLinks.userId"] === undefined) {
-        $.ajax({
-            url: `${endpoint}/d2l/api/lp/${lpVersion}/users/whoami`,
-            dataType: "json",
-            success: function(whoami) {
-                localStorage["quickerLinks.userId"] = whoami.Identifier;
-            },
-            error: function (e) {
-                console.log("Error: Not a valid URL.");
-            }
         });
-    }
-});
+    });
+}
 
 function loadCourses() {
     $('#title').attr('href', `${endpoint}/d2l/home`);

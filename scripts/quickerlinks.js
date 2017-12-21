@@ -4,23 +4,6 @@ let lpVersion = '1.20';
 let defaultFutureDays = 4;
 let defaultPastDays = -3;
 
-chrome.omnibox.onInputEntered.addListener(function (command) {
-    if (localStorage["quickerLinks.isAdmin"] === 'true') {
-        if (command === 'config') {
-            chrome.tabs.update({ url: `${endpoint}/d2l/lp/configVariableBrowser` });
-        }
-        else if (command === 'users') {
-            chrome.tabs.update({ url: `${endpoint}/d2l/lp/manageUsers/main.d2l?ou=${localStorage["quickerLinks.domainId"]}` });
-        }
-        else if (command === 'sel') {
-            chrome.tabs.update({ url: `${endpoint}/d2l/logging` });
-        }
-    }
-    else {
-        alert(`Access denied. Not an admin for ${endpoint}`);
-    }
-});
-
 $(document).ready(function() {
     if (!endpoint) {
         inferEndpointFromTabs();

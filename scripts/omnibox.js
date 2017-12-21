@@ -1,39 +1,103 @@
+
+let commandTrie = {
+    children: {},
+    suggestion: null
+}
+let trieInitialized = false;
+
+function insertSuggestion(trie, toInsert) {
+    let cmd = toInsert.command;
+    let suggestion = toInsert.suggestion
+    let trieNode = trie;
+    for (letter of cmd) {
+        if (trieNode.children[letter]) {
+            trieNode = trieNode.children[letter]
+        } else {
+            trieNode.children[letter] = { children: {}, suggestion: null }
+            trieNode = trieNode.children[letter]
+        }
+    }
+    trieNode.suggestion = suggestion
+}
+
+function getSuggestions(trie, command) {
+    let suggestions = []
+    let trieNode = trie;
+
+    // Search for lowest common ancestor
+    for (letter of command) {
+        trieNode = trieNode.children[letter]
+        if (!trieNode) {
+            return suggestions;
+        }
+    }
+    // Take all paths from this ancestor.
+    getAllChildrenSuggestions(trieNode, suggestions)
+    return suggestions;
+}
+
+function getAllChildrenSuggestions(trieNode, suggestions) {
+    if (trieNode.suggestion) suggestions.push(trieNode.suggestion)
+
+    for (key in trieNode.children ) {
+        getAllChildrenSuggestions(trieNode.children[key], suggestions)
+    }
+}
+
+
+function initTrie() {
+    insertSuggestion(commandTrie, {
+        command: "home",
+        suggestion: {
+            content: `${localStorage["quickerLinks.domain"]}/d2l/home`,
+            description: 'Your home page'
+        }
+    })
+
+    insertSuggestion(commandTrie, {
+        command: "users",
+        suggestion: {
+            content: `${localStorage["quickerLinks.domain"]}/d2l/lp/manageUsers/main.d2l?ou=${localStorage["quickerLinks.domainId"]}`,
+            description: 'Manage the users'
+        }
+    });
+
+    insertSuggestion(commandTrie, {
+        command: "sel",
+        suggestion: {
+            content: `${localStorage["quickerLinks.domain"]}/d2l/logging`,
+            description: 'System error log'
+        }
+    });
+
+    insertSuggestion(commandTrie, {
+        command: "config",
+        suggestion: {
+            content: `${localStorage["quickerLinks.domain"]}/d2l/lp/configVariableBrowser`,
+            description: 'Config variable browser'
+        }
+    });
+}
+
+chrome.omnibox.onInputStarted.addListener(
+    function() {
+        if (!trieInitialized) {
+            initTrie();
+            trieInitialized = true;
+        }
+    });
+
 chrome.omnibox.onInputChanged.addListener(
     function(text, suggest) {
-    //   text = text.split(' ')
-    //   if (text[1] == "0") {
-    //       suggest([{content: "https://d2llabs.desire2learn.com/d2l/home", description: "Home page"}])
-    //   } else {
-    //       suggest([
-    //           {content: "https://d2llabs.desire2learn.com/d2l/home", description: "Home page"},
-    //           {content: "https://d2l.com", description: "D2L website"}
-    //       ]);
-    //   }
+        sg = getSuggestions(commandTrie, text)
+        suggest(sg)
 });
 
 chrome.omnibox.onInputEntered.addListener(
     function(text) {
-    //
-    // let newTabProperties = {
-    //     url: text,
-    //     active: true
-    // }
-    // chrome.tabs.create(newTabProperties)
-});
-
-chrome.omnibox.onInputEntered.addListener(function (command) {
-    if (localStorage["quickerLinks.isAdmin"] === 'true') {
-        if (command === 'config') {
-          chrome.tabs.update({ url: `${localStorage["quickerLinks.domain"]}/d2l/lp/configVariableBrowser` });
-        }
-        else if (command === 'users') {
-          chrome.tabs.update({ url: `${localStorage["quickerLinks.domain"]}/d2l/lp/manageUsers/main.d2l?ou=${localStorage["quickerLinks.domainId"]}` });
-        }
-        else if (command === 'sel') {
-          chrome.tabs.update({ url: `${localStorage["quickerLinks.domain"]}/d2l/logging` });
-        }
+    let newTabProperties = {
+        url: text,
+        active: true
     }
-    else {
-        alert(`Access denied. Not an admin for ${endpoint}`);
-    }
+    chrome.tabs.create(newTabProperties)
 });

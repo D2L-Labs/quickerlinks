@@ -68,15 +68,6 @@ body {
 	margin-top: .5rem;
 }
 
-.homeHeader {
-	display: flex;
-}
-
-/*.homeHeader a {
-	font-size: 180%;
-	margin-top: auto;
-}*/
-
 .ellipses {
 	opacity: 0;
 	position: absolute;

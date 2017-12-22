@@ -9,14 +9,31 @@
 		<script src="scripts/popper.js"></script>
   		<script src="scripts/bootstrap.min.js"></script>
         <script src="scripts/course.js"></script>
-		<link rel="stylesheet" href="styles/bootstrap.min.css">
 		<link rel="stylesheet" href="styles/course.css">
+		<link rel="stylesheet" href="styles/bootstrap.min.css">
 	</head>
 	<body>
         <div id="courseHeader" class="courseHeader">
             <div class="spaceBetween">
                 <a id="back"><span class="glyphicon glyphicon-menu-left headerGlyphicons"></span></a>
-                <a href="settings.html"><span class="glyphicon glyphicon-cog headerGlyphicons"></span></a>
+				<div class="dropdown show">
+					<a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown">
+						<div class="ellipses">
+							<svg viewBox="0 0 18 18" preserveAspectRatio="xMidYMid meet" focusable="false" style="pointer-events: none; display: block; width: 80%; height: 80%;">
+							<g class="style-scope d2l-icon">
+								<path d="M2,7 C0.895,7 0,7.895 0,9 C0,10.105 0.895,11 2,11 C3.105,11 4,10.105 4,9 C4,7.895 3.105,7 2,7 Z M16,7 C14.895,7 14,7.895 14,9 C14,10.105 14.895,11 16,11 C17.105,11 18,10.105 18,9 C18,7.895 17.105,7 16,7 Z M9,7 C7.895,7 7,7.895 7,9 C7,10.105 7.895,11 9,11 C10.105,11 11,10.105 11,9 C11,7.895 10.105,7 9,7 Z">
+								</path>
+							</g>
+							</svg>
+						</div>
+					</a>
+					<ul class="dropdown-menu dropdown-menu-right">
+						<li><a class="dropdown-item" href="#" target="_blank">Go to course</a></li>
+					</ul>
+				</div>
+				<ul class="dropdown-menu menu">
+					<li><a class="dropdown-item" href="#" target="_blank">Go to course</a></li>
+				</ul>
             </div>
             <div class="courseTitle">
                 <a class="title" id="title" target="_blank"></a>

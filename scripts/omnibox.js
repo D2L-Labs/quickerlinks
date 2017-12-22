@@ -45,35 +45,38 @@ function getAllChildrenSuggestions(trieNode, suggestions) {
 
 
 function initTrie() {
+    let orgUnitId = localStorage["quickerLinks.orgUnitId"];
+    let domain = localStorage["quickerLinks.domain"];
+
     insertSuggestion(commandTrie, {
         command: "home",
         suggestion: {
-            content: `${localStorage["quickerLinks.domain"]}/d2l/home`,
-            description: 'Your home page'
+            content: `${domain}/d2l/home`,
+            description: 'home - Your home page'
         }
     })
 
     insertSuggestion(commandTrie, {
         command: "users",
         suggestion: {
-            content: `${localStorage["quickerLinks.domain"]}/d2l/lp/manageUsers/main.d2l?ou=${localStorage["quickerLinks.domainId"]}`,
-            description: 'Manage the users'
+            content: `${domain}/d2l/lp/manageUsers/main.d2l?ou=${orgUnitId}`,
+            description: 'users - Manage the users'
         }
     });
 
     insertSuggestion(commandTrie, {
         command: "sel",
         suggestion: {
-            content: `${localStorage["quickerLinks.domain"]}/d2l/logging`,
-            description: 'System error log'
+            content: `${domain}/d2l/logging`,
+            description: 'sel - System error log'
         }
     });
 
     insertSuggestion(commandTrie, {
         command: "config",
         suggestion: {
-            content: `${localStorage["quickerLinks.domain"]}/d2l/lp/configVariableBrowser`,
-            description: 'Config variable browser'
+            content: `${domain}/d2l/lp/configVariableBrowser`,
+            description: 'config - Config variable browser'
         }
     });
 }
@@ -91,15 +94,17 @@ chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
 
 chrome.omnibox.onInputEntered.addListener(function(command) {
     let url = ''
+    let orgUnitId = localStorage["quickerLinks.orgUnitId"];
+    let domain = localStorage["quickerLinks.domain"];
     if (localStorage["quickerLinks.isAdmin"] === 'true') {
         if (command === 'config') {
-            url =  `${localStorage["quickerLinks.domain"]}/d2l/lp/configVariableBrowser`
+            url =  `${domain}/d2l/lp/configVariableBrowser`
         }
         else if (command === 'users') {
-            url = `${localStorage["quickerLinks.domain"]}/d2l/lp/manageUsers/main.d2l?ou=${localStorage["quickerLinks.domainId"]}`;
+            url = `${domain}/d2l/lp/manageUsers/main.d2l?ou=${orgUnitId}`;
         }
         else if (command === 'sel') {
-            url = `${localStorage["quickerLinks.domain"]}/d2l/logging`;
+            url = `${domain}/d2l/logging`;
         }
         else if (command.startsWith('http')) {
             url = command;

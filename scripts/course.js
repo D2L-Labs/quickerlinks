@@ -25,9 +25,11 @@ function loadCourse(courseInfo) {
             $('#title').html(courseInfo.courseName);
             $('#title').attr('href', `${endpoint}/d2l/home/${courseInfo.courseId}`);
             let image = data.OrgUnit.ImageUrl || "https://d2q79iu7y748jz.cloudfront.net/s/_logo/2b6d922805d2214befee400b8bb5de7f.png";
-            $('#courseHeader').css('background-image', `url("${image}")`);
+            // $('#courseHeader').css('background-image', `url("${image}")`);
             $('#courseHeader').css('width', window.innerWidth);
-            $('#courseHeader').css('height', window.innerWidth/2.32);
+            $('#courseHeader').css('height', window.innerWidth/3);
+            $('#courseHeader').css('background', `linear-gradient(rgba(0, 0, 0, 0), #000 250px), url("${image}")`);
+            $('#courseHeader').css('background-position', 'center');
             loadUpdates(courseInfo);
             loadSubmissions(courseInfo);
             loadContent(courseInfo);
@@ -108,14 +110,14 @@ function loadUpdates(courseInfo) {
         success: function(data) {
             let badgeNums = [data.UnreadDiscussions, data.UnreadAssignmentFeedback, data.UnattemptedQuizzes]
             $('#course').prepend(`<ul id="badges" class="nav nav-pills"></ul>`);
-            $('#badges').append(`<li><a id="badge0" href="${endpoint}/d2l/le/${courseInfo.courseId}/discussions/List" target="_blank">Discussions </a></li>`);
-            $('#badges').append(`<li><a id="badge1" href="${endpoint}/d2l/lms/dropbox/dropbox.d2l?ou=${courseInfo.courseId}" target="_blank">Assignments </a></li>`);
-            $('#badges').append(`<li><a id="badge2" href="${endpoint}/d2l/lms/quizzing/user/quizzes_list.d2l?ou=${courseInfo.courseId}" target="_blank">Quizzes </a></li>`);
-            $('#badges').append(`<li><a href="${endpoint}/d2l/lms/grades/my_grades/main.d2l?ou=${courseInfo.courseId}" target="_blank">Grades</a></li>`);
+            $('#badges').append(`<li><a id="badge0" class="badges" href="${endpoint}/d2l/le/${courseInfo.courseId}/discussions/List" target="_blank">Discussions </a></li>`);
+            $('#badges').append(`<li><a id="badge1" class="badges" href="${endpoint}/d2l/lms/dropbox/dropbox.d2l?ou=${courseInfo.courseId}" target="_blank">Assignments </a></li>`);
+            $('#badges').append(`<li><a id="badge2" class="badges" href="${endpoint}/d2l/lms/quizzing/user/quizzes_list.d2l?ou=${courseInfo.courseId}" target="_blank">Quizzes </a></li>`);
+            $('#badges').append(`<li><a class="badges" href="${endpoint}/d2l/lms/grades/my_grades/main.d2l?ou=${courseInfo.courseId}" target="_blank">Grades</a></li>`);
 
             for (let i=0; i<badgeNums.length; i++) {
                 if (badgeNums[i] > 0) {
-                    $(`#badge${i}`).append(`<span class="badge">${badgeNums[i]}</span>`)
+                    $(`#badge${i}`).append(`<span class="notification">${badgeNums[i]}</span>`)
                 }
             }
         },

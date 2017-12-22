@@ -9,7 +9,16 @@ body {
 }
 
 .courseTitle {
-	margin-top: 110px;
+	/*margin-top: 110px;*/
+}
+
+.courseHeader {
+	padding-left: 15px;
+	padding-right: 15px;
+	padding-bottom: 15px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
 }
 
 .courseHeader div a {
@@ -32,4 +41,22 @@ body {
 
 #back:hover {
 	cursor:pointer;
+}
+
+.badges {
+	color: #006fbf;
+}
+
+.notification {
+	border: 2px solid #e87511;
+	color: #e87511;
+	border-radius: .25rem;
+	font-size: 1.25rem;
+	font-weight: 700;
+	width: 2rem;
+	height: 2rem;
+	line-height: 2rem;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
 }

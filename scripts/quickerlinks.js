@@ -145,6 +145,12 @@ function loadCourses() {
                     }
                 });
             })
+            $('.courseImage').hover(function() {
+                $(this).parent().parent('.ellipses').addClass('ellipsesHover');
+                // console.log($(this).parent().parent('.ellipses'));
+            }, function() {
+                $(this).parent().parent('.ellipses').removeClass('ellipsesHover');
+            });
         },
         error: function (e) {
             $('#home').html(`<div class="panel panel-info"><div class="panel-heading">Not logged in</div><div class="panel-body"><a href="${endpoint}/d2l/login" target="_blank">Click here</a> to go to your Brightspace site and log in.</div></div>`);

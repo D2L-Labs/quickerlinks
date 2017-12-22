@@ -52,7 +52,7 @@ function initTrie() {
         command: "home",
         suggestion: {
             content: `${domain}/d2l/home`,
-            description: 'Your home page'
+            description: 'home - Your home page'
         }
     })
 
@@ -60,7 +60,7 @@ function initTrie() {
         command: "users",
         suggestion: {
             content: `${domain}/d2l/lp/manageUsers/main.d2l?ou=${orgUnitId}`,
-            description: 'Manage the users'
+            description: 'users - Manage the users'
         }
     });
 
@@ -68,7 +68,7 @@ function initTrie() {
         command: "sel",
         suggestion: {
             content: `${domain}/d2l/logging`,
-            description: 'System error log'
+            description: 'sel - System error log'
         }
     });
 
@@ -76,7 +76,7 @@ function initTrie() {
         command: "config",
         suggestion: {
             content: `${domain}/d2l/lp/configVariableBrowser`,
-            description: 'Config variable browser'
+            description: 'config - Config variable browser'
         }
     });
 }

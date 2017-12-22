@@ -1,13 +1,13 @@
 $(document).ready(function() {
     if (localStorage["quickerLinks.domain"]) {
-        $('#domainInput').attr('placeholder', localStorage["quickerLinks.domain"])
+        $('#domainInput').attr('value', localStorage["quickerLinks.domain"])
     }
     else {
-        $('#domainInput').attr('placeholder', "No domain set.")
+        $('#domainInput').attr('value', "No domain set.")
     }
     $('#domainButton').click(function() {
         let domain = $('#domainInput').val();
-        if (!domain.startsWith('http')) {
+        if (domain && !domain.startsWith('http')) {
             domain = "https://" + domain;
         }
         localStorage["quickerLinks.domain"] = domain;
@@ -28,8 +28,14 @@ $(document).ready(function() {
         localStorage.setItem("quickerLinks.pinnedOnly", ($('input[name=coursesVisibility]:checked').val() == 'true'));
     });
 
-    $('#pastRangeInput').attr('placeholder', localStorage["quickerLinks.dropboxPastDays"]);
-    $('#futureRangeInput').attr('placeholder', localStorage["quickerLinks.dropboxFutureDays"]);
+    for (let i=0; i<=7; i++) {
+        $('#pastRangeInput').append(`<option id="past${i}">${i}</option>`);
+        if (i !== 0) {
+            $('#futureRangeInput').append(`<option id="future${i}">${i}</option>`);
+        }
+    }
+    $(`#pastRangeInput #past${localStorage["quickerLinks.dropboxPastDays"]}`).attr('selected', 'selected');
+    $(`#futureRangeInput #future${localStorage["quickerLinks.dropboxFutureDays"]}`).attr('selected', 'selected');
     $('#rangeButton').click(function() {
         localStorage["quickerLinks.dropboxPastDays"] = $('#pastRangeInput').val() || localStorage["quickerLinks.dropboxPastDays"];
         localStorage["quickerLinks.dropboxFutureDays"] = $('#futureRangeInput').val() || localStorage["quickerLinks.dropboxFutureDays"];

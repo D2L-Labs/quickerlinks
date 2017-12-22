@@ -2,7 +2,7 @@ let endpoint = localStorage["quickerLinks.domain"];
 let leVersion = '1.24';
 let lpVersion = '1.20';
 let defaultFutureDays = 4;
-let defaultPastDays = -3;
+let defaultPastDays = 3;
 
 $(document).ready(function() {
     if (!endpoint) {

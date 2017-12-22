@@ -29,12 +29,14 @@
                     <div><input type="radio" name="coursesVisibility" id="allCourses" value="false"/>All Courses</div>
                 </div>
                 <div class="setting">
-                    <div>Dropbox Date Range</div>
+                    <div>Dropbox Due Date Range</div>
                     <div>
-                        Due dates in the past <input type="text" style="width:100px" id="pastRangeInput"/> days.
+                        Dates in the past <select id="pastRangeInput"></select>	days.
+						<!-- <input type="text" style="width:100px" id="pastRangeInput"/>  -->
                     </div>
                     <div>
-                        Due dates in upcoming <input type="text" style="width:100px" id="futureRangeInput"/> days.
+                        Dates in upcoming <select id="futureRangeInput"></select> days.
+						<!-- <input type="text" style="width:100px" id="futureRangeInput"/> -->
                     </div>
                     <button id="rangeButton">Set range</button>
                 </div>

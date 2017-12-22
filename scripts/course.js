@@ -10,6 +10,7 @@ $(document).ready(function() {
     let courseId = window.location.search.substring(courseStart + 3, nameStart - 1);
     let courseName = window.location.search.substring(nameStart + 5).replace(new RegExp('%20', 'g'), ' ')
     let courseInfo = {courseId, courseName}
+    $(".dropdown-item").attr('href', `${endpoint}/d2l/home/${courseId}`)
     loadCourse(courseInfo)
     $('#back').click(function() {
         window.location.href = 'popup.html'

@@ -59,6 +59,7 @@ body {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
+}
 
 .ellipses {
 	opacity: 0;

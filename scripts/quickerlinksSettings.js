@@ -3,7 +3,7 @@ $(document).ready(function() {
         $('#domainInput').attr('value', localStorage["quickerLinks.domain"])
     }
     else {
-        $('#domainInput').attr('value', "No domain set.")
+        $('#domainInput').attr('placeholder', "No domain set.")
     }
     $('#domainButton').click(function() {
         let domain = $('#domainInput').val();
@@ -36,8 +36,10 @@ $(document).ready(function() {
     }
     $(`#pastRangeInput #past${localStorage["quickerLinks.dropboxPastDays"]}`).attr('selected', 'selected');
     $(`#futureRangeInput #future${localStorage["quickerLinks.dropboxFutureDays"]}`).attr('selected', 'selected');
-    $('#rangeButton').click(function() {
+    $('#pastRangeInput').change(function() {
         localStorage["quickerLinks.dropboxPastDays"] = $('#pastRangeInput').val() || localStorage["quickerLinks.dropboxPastDays"];
+    });
+    $('#futureRangeInput').change(function() {
         localStorage["quickerLinks.dropboxFutureDays"] = $('#futureRangeInput').val() || localStorage["quickerLinks.dropboxFutureDays"];
     });
 });

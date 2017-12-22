@@ -67,7 +67,7 @@ function inferEndpointFromTabs() {
                 loadCourses();
             },
             error: function () {
-                $('#home').html(`<a href="settings.html">No domain has been set yet. Click here.</a>`);
+                $('#home').html(`<div class="panel panel-warning"><div class="panel-heading">Cannot find Brightspace</div><div class="panel-body">No domain has been set yet. <a href="settings.html">Click here</a> to change your settings, or log in to your Brightspace site in a new tab.</div></div>`);
             }
         });
     });
@@ -147,7 +147,7 @@ function loadCourses() {
             })
         },
         error: function (e) {
-            $('#home').html(`<a href="${endpoint}/d2l/login" target="_blank">Could not login. Click here to log in.</a>`);
+            $('#home').html(`<div class="panel panel-info"><div class="panel-heading">Not logged in</div><div class="panel-body"><a href="${endpoint}/d2l/login" target="_blank">Click here</a> to go to your Brightspace site and log in.</div></div>`);
             console.log("Error: Not a valid URL.");
         }
     });

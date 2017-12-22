@@ -20,25 +20,24 @@
 				<div>Settings</div>
                 <div class="setting">
                     <div>Domain</div>
-                    <input type="text" style="width:250px" id="domainInput"/>
+                    <input type="text" style="width:250px" id="domainInput" class="settingsContent"/>
                     <button id="domainButton">Set domain</button>
                 </div>
                 <div class="setting">
                     <div>Courses Visibility</div>
-                    <div><input type="radio" name="coursesVisibility" id="pinnedCourses" value="true"/>Pinned Courses Only</div>
-                    <div><input type="radio" name="coursesVisibility" id="allCourses" value="false"/>All Courses</div>
+                    <div class="settingsContent"><input type="radio" name="coursesVisibility" id="pinnedCourses" value="true"/>Pinned Courses Only</div>
+                    <div class="settingsContent"><input type="radio" name="coursesVisibility" id="allCourses" value="false"/>All Courses</div>
                 </div>
                 <div class="setting">
                     <div>Dropbox Due Date Range</div>
-                    <div>
+                    <div class="settingsContent">
                         Dates in the past <select id="pastRangeInput"></select>	days.
 						<!-- <input type="text" style="width:100px" id="pastRangeInput"/>  -->
                     </div>
-                    <div>
+                    <div class="settingsContent">
                         Dates in upcoming <select id="futureRangeInput"></select> days.
 						<!-- <input type="text" style="width:100px" id="futureRangeInput"/> -->
                     </div>
-                    <button id="rangeButton">Set range</button>
                 </div>
 			</div>
 		</div>

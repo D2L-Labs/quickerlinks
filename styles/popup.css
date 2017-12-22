@@ -1,6 +1,6 @@
 body {
-	width: 450px;
-	min-height: 620px;
+	width: 471px;
+	min-height: 700px;
 }
 
 .myCourses {
@@ -51,7 +51,11 @@ body {
 }
 
 .homeHeader {
-	display: flex;
+	.clearfix();
+}
+
+.homeHeader::after {
+  clear: both;
 }
 
 .ellipses {
@@ -81,8 +85,8 @@ body {
 }
 
 .settingsIcon {
-	margin-top: 5px;
-	margin-left: 200px;
+	padding-top: 20px;
+	padding-right:10px;
 }
 
 .settingsIcon span {
@@ -92,4 +96,9 @@ body {
 .courseImage {
 	border-top-right-radius: 7px;
 	border-top-left-radius: 7px
+}
+
+.mainContainer {
+	padding-left:5px;
+	padding-right:5px;
 }

@@ -106,11 +106,18 @@ function loadUpdates(courseInfo) {
         url: `${endpoint}/d2l/api/le/${leVersion}/${courseInfo.courseId}/updates/myUpdates`,
         dataType: "json",
         success: function(data) {
+            let badgeNums = [data.UnreadDiscussions, data.UnreadAssignmentFeedback, data.UnattemptedQuizzes]
             $('#course').prepend(`<ul id="badges" class="nav nav-pills"></ul>`);
-            $('#badges').append(`<li><a href="${endpoint}/d2l/le/${courseInfo.courseId}/discussions/List" target="_blank">Discussions <span class="badge">${data.UnreadDiscussions}</span></a></li>`)
-            $('#badges').append(`<li><a href="${endpoint}/d2l/lms/quizzing/user/quizzes_list.d2l?ou=${courseInfo.courseId}" target="_blank">Quizzes <span class="badge">${data.UnattemptedQuizzes}</span></a></li>`)
-            $('#badges').append(`<li><a href="${endpoint}/d2l/lms/grades/my_grades/main.d2l?ou=${courseInfo.courseId}" target="_blank">Grades</a></li>`)
-            $('#feedback').html(`Feedback <span class="badge" style="margin-left: 5px;">${data.UnreadAssignmentFeedback}</span>`);
+            $('#badges').append(`<li><a id="badge0" href="${endpoint}/d2l/le/${courseInfo.courseId}/discussions/List" target="_blank">Discussions </a></li>`);
+            $('#badges').append(`<li><a id="badge1" href="${endpoint}/d2l/lms/dropbox/dropbox.d2l?ou=${courseInfo.courseId}" target="_blank">Assignments </a></li>`);
+            $('#badges').append(`<li><a id="badge2" href="${endpoint}/d2l/lms/quizzing/user/quizzes_list.d2l?ou=${courseInfo.courseId}" target="_blank">Quizzes </a></li>`);
+            $('#badges').append(`<li><a href="${endpoint}/d2l/lms/grades/my_grades/main.d2l?ou=${courseInfo.courseId}" target="_blank">Grades</a></li>`);
+
+            for (let i=0; i<badgeNums.length; i++) {
+                if (badgeNums[i] > 0) {
+                    $(`#badge${i}`).append(`<span class="badge">${badgeNums[i]}</span>`)
+                }
+            }
         },
         error: function (e) {
             console.log("Error: Not a valid URL.");

@@ -6,17 +6,17 @@ let trieInitialized = false;
 
 function insertSuggestion(trie, toInsert) {
     let cmd = toInsert.command;
-    let suggestion = toInsert.suggestion
+    let suggestion = toInsert.suggestion;
     let trieNode = trie;
     for (letter of cmd) {
         if (trieNode.children[letter]) {
-            trieNode = trieNode.children[letter]
+            trieNode = trieNode.children[letter];
         } else {
-            trieNode.children[letter] = { children: {}, suggestion: null }
-            trieNode = trieNode.children[letter]
+            trieNode.children[letter] = { children: {}, suggestion: null };
+            trieNode = trieNode.children[letter];
         }
     }
-    trieNode.suggestion = suggestion
+    trieNode.suggestion = suggestion;
 }
 
 function getSuggestions(trie, command) {
@@ -38,7 +38,7 @@ function getSuggestions(trie, command) {
 function getAllChildrenSuggestions(trieNode, suggestions) {
     if (trieNode.suggestion) suggestions.push(trieNode.suggestion)
 
-    for (key in trieNode.children ) {
+    for (key in trieNode.children) {
         getAllChildrenSuggestions(trieNode.children[key], suggestions)
     }
 }
@@ -78,24 +78,18 @@ function initTrie() {
     });
 }
 
-chrome.omnibox.onInputStarted.addListener( function() {
+chrome.omnibox.onInputStarted.addListener(function() {
     if (!trieInitialized) {
         initTrie();
         trieInitialized = true;
     }
 });
 
-chrome.omnibox.onInputChanged.addListener( function(text, suggest) {
-    // suggest([
-    //     {content: `${localStorage["quickerLinks.domain"]}/d2l/lp/configVariableBrowser`, description: "Config Variable Browser"},
-    //     {content: `${localStorage["quickerLinks.domain"]}/d2l/lp/manageUsers/main.d2l?ou=${localStorage["quickerLinks.domainId"]}`, description: "Users"},
-    //     {content: `${localStorage["quickerLinks.domain"]}/d2l/logging`, description: "System Logs"}
-    // ]);
-    sg = getSuggestions(commandTrie, text)
-    suggest(sg)
+chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
+    suggest(getSuggestions(commandTrie, text));
 });
 
-chrome.omnibox.onInputEntered.addListener (function(command) {
+chrome.omnibox.onInputEntered.addListener(function(command) {
     let url = ''
     if (localStorage["quickerLinks.isAdmin"] === 'true') {
         if (command === 'config') {

@@ -3,7 +3,7 @@
 	"name": "QuickerLinks",
 	"short_name": "QuickerLinks",
 	"version": "0.0.0.1",
-	"description": "An experimental chrome extension built by D2L Labs. This exension is not supported and is provided as-is, and without warranty.",
+	"description": "An experimental chrome extension built by D2L Labs. This extension is not supported and is provided as-is, and without warranty.",
 	"omnibox": { "keyword" : "d2l" },
 	"icons": {
 		"16": "./styles/images/icon.png"

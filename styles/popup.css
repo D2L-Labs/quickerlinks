@@ -84,6 +84,12 @@ body {
 	cursor: pointer;
 }
 
+.ellipses:hover {
+	opacity: 1;
+	background: rgba(0,0,0,.5);
+	cursor: pointer;
+}
+
 .settingsContent {
 	margin-left: 15px;
 }

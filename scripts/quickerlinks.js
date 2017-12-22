@@ -146,10 +146,9 @@ function loadCourses() {
                 });
             })
             $('.courseImage').hover(function() {
-                $(this).parent().parent('.ellipses').addClass('ellipsesHover');
-                // console.log($(this).parent().parent('.ellipses'));
+                $(this).parent().parent().find('.ellipses').addClass('ellipsesHover');
             }, function() {
-                $(this).parent().parent('.ellipses').removeClass('ellipsesHover');
+                $(this).parent().parent().find('.ellipses').removeClass('ellipsesHover');
             });
         },
         error: function (e) {

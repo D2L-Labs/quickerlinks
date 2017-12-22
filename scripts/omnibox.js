@@ -45,10 +45,13 @@ function getAllChildrenSuggestions(trieNode, suggestions) {
 
 
 function initTrie() {
+    let orgUnitId = localStorage["quickerLinks.orgUnitId"];
+    let domain = localStorage["quickerLinks.domain"];
+
     insertSuggestion(commandTrie, {
         command: "home",
         suggestion: {
-            content: `${localStorage["quickerLinks.domain"]}/d2l/home`,
+            content: `${domain}/d2l/home`,
             description: 'Your home page'
         }
     })
@@ -56,7 +59,7 @@ function initTrie() {
     insertSuggestion(commandTrie, {
         command: "users",
         suggestion: {
-            content: `${localStorage["quickerLinks.domain"]}/d2l/lp/manageUsers/main.d2l?ou=${localStorage["quickerLinks.domainId"]}`,
+            content: `${domain}/d2l/lp/manageUsers/main.d2l?ou=${orgUnitId}`,
             description: 'Manage the users'
         }
     });
@@ -64,7 +67,7 @@ function initTrie() {
     insertSuggestion(commandTrie, {
         command: "sel",
         suggestion: {
-            content: `${localStorage["quickerLinks.domain"]}/d2l/logging`,
+            content: `${domain}/d2l/logging`,
             description: 'System error log'
         }
     });
@@ -72,7 +75,7 @@ function initTrie() {
     insertSuggestion(commandTrie, {
         command: "config",
         suggestion: {
-            content: `${localStorage["quickerLinks.domain"]}/d2l/lp/configVariableBrowser`,
+            content: `${domain}/d2l/lp/configVariableBrowser`,
             description: 'Config variable browser'
         }
     });
@@ -87,9 +90,9 @@ chrome.omnibox.onInputStarted.addListener( function() {
 
 chrome.omnibox.onInputChanged.addListener( function(text, suggest) {
     // suggest([
-    //     {content: `${localStorage["quickerLinks.domain"]}/d2l/lp/configVariableBrowser`, description: "Config Variable Browser"},
-    //     {content: `${localStorage["quickerLinks.domain"]}/d2l/lp/manageUsers/main.d2l?ou=${localStorage["quickerLinks.domainId"]}`, description: "Users"},
-    //     {content: `${localStorage["quickerLinks.domain"]}/d2l/logging`, description: "System Logs"}
+    //     {content: `${domain}/d2l/lp/configVariableBrowser`, description: "Config Variable Browser"},
+    //     {content: `${domain}/d2l/lp/manageUsers/main.d2l?ou=${orgUnitId}`, description: "Users"},
+    //     {content: `${domain}/d2l/logging`, description: "System Logs"}
     // ]);
     sg = getSuggestions(commandTrie, text)
     suggest(sg)
@@ -97,15 +100,17 @@ chrome.omnibox.onInputChanged.addListener( function(text, suggest) {
 
 chrome.omnibox.onInputEntered.addListener (function(command) {
     let url = ''
+    let orgUnitId = localStorage["quickerLinks.orgUnitId"];
+    let domain = localStorage["quickerLinks.domain"];
     if (localStorage["quickerLinks.isAdmin"] === 'true') {
         if (command === 'config') {
-            url =  `${localStorage["quickerLinks.domain"]}/d2l/lp/configVariableBrowser`
+            url =  `${domain}/d2l/lp/configVariableBrowser`
         }
         else if (command === 'users') {
-            url = `${localStorage["quickerLinks.domain"]}/d2l/lp/manageUsers/main.d2l?ou=${localStorage["quickerLinks.domainId"]}`;
+            url = `${domain}/d2l/lp/manageUsers/main.d2l?ou=${orgUnitId}`;
         }
         else if (command === 'sel') {
-            url = `${localStorage["quickerLinks.domain"]}/d2l/logging`;
+            url = `${domain}/d2l/logging`;
         }
         else if (command.startsWith('http')) {
             url = command;

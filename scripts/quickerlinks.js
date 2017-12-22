@@ -26,7 +26,7 @@ function checkIfAdmin() {
         success: function (myenrollments) {
             if (myenrollments.Items[0].Access.LISRoles.includes("urn:lti:instrole:ims/lis/Administrator")) {
                 localStorage["quickerLinks.isAdmin"] = 'true';
-                localStorage["quickerLinks.domainId"] = myenrollments.Items[0].OrgUnit.Id;
+                localStorage["quickerLinks.orgUnitId"] = myenrollments.Items[0].OrgUnit.Id;
             }
             else {
                 localStorage["quickerLinks.isAdmin"] = 'false';

@@ -34,6 +34,11 @@ function loadCourse(courseInfo) {
             loadUpdates(courseInfo);
             loadSubmissions(courseInfo);
             loadContent(courseInfo);
+            $('#courseHeader').hover(function() {
+                $(this).parent().parent().find('.ellipses').addClass('ellipsesHover');
+            }, function() {
+                $(this).parent().parent().find('.ellipses').removeClass('ellipsesHover');
+            });
         },
         error: function (e) {
             console.log("Error: Not a valid URL.");

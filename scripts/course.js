@@ -13,7 +13,7 @@ $(document).ready(function() {
     $(".dropdown-item").attr('href', `${endpoint}/d2l/home/${courseId}`)
     loadCourse(courseInfo)
     $('#back').click(function() {
-        window.location.href = 'popup.html'
+        window.location.href = 'home.html'
     });
 });
 

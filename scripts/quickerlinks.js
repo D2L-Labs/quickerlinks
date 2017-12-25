@@ -83,6 +83,14 @@ function loadCourses() {
             let domainName = courses.filter(course => course.OrgUnit.Type.Id === 1)[0].OrgUnit.Name;
             $('#title').html(domainName);
             let pinnedCourses = courses.filter(course => (!(localStorage["quickerLinks.pinnedOnly"]==='true') || course.PinDate)).filter(course => course.OrgUnit.Type.Id === 3);
+            if (pinnedCourses.length === 0) {
+                if (localStorage["quickerLinks.pinnedOnly"]==='true') {
+                    $('#home').html(`<div class="panel panel-success"><div class="panel-heading">No pinned courses</div><div class="panel-body">Go to your Brightspace site and pin some courses.</div></div>`);
+                }
+                else {
+                    $('#home').html(`<div class="panel panel-success"><div class="panel-heading">No courses</div><div class="panel-body">You are not enrolled in any courses.</div></div>`);
+                }
+            }
             let numRows = pinnedCourses.length / 2 + 1;
 
             // Two courses take up one row.

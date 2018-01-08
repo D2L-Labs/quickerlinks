@@ -96,25 +96,29 @@ chrome.omnibox.onInputEntered.addListener(function(command) {
     let url = ''
     let orgUnitId = localStorage["quickerLinks.orgUnitId"];
     let domain = localStorage["quickerLinks.domain"];
-    if (localStorage["quickerLinks.isAdmin"] === 'true') {
-        if (command === 'config') {
-            url =  `${domain}/d2l/lp/configVariableBrowser`
-        }
-        else if (command === 'users') {
-            url = `${domain}/d2l/lp/manageUsers/main.d2l?ou=${orgUnitId}`;
-        }
-        else if (command === 'sel') {
-            url = `${domain}/d2l/logging`;
-        }
-        else if (command.startsWith('http')) {
-            url = command;
+    if (command === 'home') {
+        url = `${domain}/d2l/home`;
+    } else {
+        if (localStorage["quickerLinks.isAdmin"] === 'true') {
+            if (command === 'config') {
+                url =  `${domain}/d2l/lp/configVariableBrowser`;
+            }
+            else if (command === 'users') {
+                url = `${domain}/d2l/lp/manageUsers/main.d2l?ou=${orgUnitId}`;
+            }
+            else if (command === 'sel') {
+                url = `${domain}/d2l/logging`;
+            }
+            else if (command.startsWith('http')) {
+                url = command;
+            }
+            else {
+                console.log('No matching command.');
+            }
         }
         else {
-            alert('No matching command.');
+            console.log(`Access denied. Not an admin for ${endpoint}`);
         }
-    }
-    else {
-        alert(`Access denied. Not an admin for ${endpoint}`);
     }
     if (url) {
         chrome.tabs.update({url});

@@ -130,7 +130,7 @@ function loadCourses() {
                                         </ul>
                                     </div>
                                     <a href="course.html?ou=${id}&name=${title}" id="${id}">
-                                        <img src="${image}" height="87" width="200" class="courseImage"/>
+                                        <img src="${image}" height="87" width="210" class="courseImage"/>
                                     </a>
                                     <div class="extLink">
                                         <a href="course.html?ou=${id}&name=${title}" id="${id}" class="name">${title}</a>
@@ -138,7 +138,7 @@ function loadCourses() {
                                 </div>`);
                 let updateParent = $(this).children('div').children('.extLink');
                 $.ajax({
-                    url: `${endpoint}/d2l/api/le/1.24/${id}/updates/myUpdates`,
+                    url: `${endpoint}/d2l/api/le/${leVersion}/${id}/updates/myUpdates`,
                     success: function (d) {
                         let updatesCount = d.UnreadDiscussions + d.UnattemptedQuizzes + d.UnreadAssignmentFeedback
                         if (updatesCount) {

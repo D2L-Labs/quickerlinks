@@ -1,5 +1,5 @@
 body {
-	width: 471px;
+	width: 500px;
 	min-height: 700px;
 }
 
@@ -51,10 +51,10 @@ body {
 	border: 2px solid #e87511;
 	color: #e87511;
 	border-radius: .25rem;
-	font-size: 1.25rem;
+	font-size: 1.20rem;
 	font-weight: 700;
-	width: 2rem;
-	height: 2rem;
+	width: 2.8rem;
+	height: 25px;
 	line-height: 2rem;
 	display: inline-flex;
 	align-items: center;

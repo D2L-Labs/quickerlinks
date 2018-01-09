@@ -116,14 +116,18 @@ function loadUpdates(courseInfo) {
         success: function(data) {
             let badgeNums = [data.UnreadDiscussions, data.UnreadAssignmentFeedback, data.UnattemptedQuizzes]
             $('#course').prepend(`<ul id="badges" class="nav nav-pills"></ul>`);
-            $('#badges').append(`<li><a id="badge0" class="badges" href="${endpoint}/d2l/le/${courseInfo.courseId}/discussions/List" target="_blank">Discussions </a></li>`);
-            $('#badges').append(`<li><a id="badge1" class="badges" href="${endpoint}/d2l/lms/dropbox/dropbox.d2l?ou=${courseInfo.courseId}" target="_blank">Assignments </a></li>`);
-            $('#badges').append(`<li><a id="badge2" class="badges" href="${endpoint}/d2l/lms/quizzing/user/quizzes_list.d2l?ou=${courseInfo.courseId}" target="_blank">Quizzes </a></li>`);
-            $('#badges').append(`<li><a class="badges" href="${endpoint}/d2l/lms/grades/my_grades/main.d2l?ou=${courseInfo.courseId}" target="_blank">Grades</a></li>`);
+            $('#badges').append(`<li><a id="badge-0" class="badges" href="${endpoint}/d2l/le/${courseInfo.courseId}/discussions/List" target="_blank" >Discussions </a></li>`);
+            $('#badges').append(`<li><a id="badge-1" class="badges" href="${endpoint}/d2l/lms/dropbox/dropbox.d2l?ou=${courseInfo.courseId}" target="_blank" >Assignments </a></li>`);
+            $('#badges').append(`<li><a id="badge-2" class="badges" href="${endpoint}/d2l/lms/quizzing/user/quizzes_list.d2l?ou=${courseInfo.courseId}" target="_blank" >Quizzes </a></li>`);
+            $('#badges').append(`<li><a id="badge-3" class="badges" href="${endpoint}/d2l/lms/grades/my_grades/main.d2l?ou=${courseInfo.courseId}" target="_blank" >Grades</a></li>`);
 
+            let updateCount, updateDisplay;
             for (let i=0; i<badgeNums.length; i++) {
-                if (badgeNums[i] > 0) {
-                    $(`#badge${i}`).append(`<span class="notification">${badgeNums[i]}</span>`)
+                updateCount = badgeNums[i];
+                updateDisplay = '';
+                if (updateCount > 0) {
+                    updateDisplay = (updateCount <= 99) ? updateCount : '99+';
+                    $(`#badge-${i}`).append(`<span class="notification">${updateDisplay}</span>`)
                 }
             }
         },

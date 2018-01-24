@@ -1,46 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-		<script src="scripts/jquery-3.2.1.min.js"></script>
-		<script src="scripts/popper.js"></script>
-  		<script src="scripts/bootstrap.min.js"></script>
-		<script src="scripts/quickerlinksSettings.js"></script>
-		<link rel="stylesheet" href="styles/bootstrap.min.css">
-		<link rel="stylesheet" href="styles/home.css">
-	</head>
-	<body>
-		<div class="container-fluid">
-			<div tabindex="1"></div>
-			<div class="settings" id="settings">
-                <a href="home.html"><span class="glyphicon glyphicon-menu-left"></span></a>
-				<div>Settings</div>
-                <div class="setting">
-                    <div>Domain</div>
-                    <input type="text" style="width:250px" id="domainInput" class="settingsContent"/>
-                    <button id="domainButton">Set domain</button>
-                </div>
-                <div class="setting">
-                    <div>Courses Visibility</div>
-                    <div class="settingsContent"><input type="radio" name="coursesVisibility" id="pinnedCourses" value="true"/>Pinned Courses Only</div>
-                    <div class="settingsContent"><input type="radio" name="coursesVisibility" id="allCourses" value="false"/>All Courses</div>
-                </div>
-                <div class="setting">
-                    <div>Dropbox Due Date Range</div>
-                    <div class="settingsContent">
-                        Dates in the past <select id="pastRangeInput"></select>	days.
-						<!-- <input type="text" style="width:100px" id="pastRangeInput"/>  -->
-                    </div>
-                    <div class="settingsContent">
-                        Dates in upcoming <select id="futureRangeInput"></select> days.
-						<!-- <input type="text" style="width:100px" id="futureRangeInput"/> -->
-                    </div>
-                </div>
-			</div>
-		</div>
-	</body>
+  <script src="scripts/jquery-3.2.1.min.js"></script>
+  <script src="scripts/popper.js"></script>
+  <script src="scripts/bootstrap.min.js"></script>
+  <script src="scripts/quickerlinksSettings.js"></script>
+  <link rel="stylesheet" href="styles/bootstrap.min.css">
+  <link rel="stylesheet" href="styles/home.css">
+</head>
+<body>
+  <div id="homeHeader" class="container-fluid homeHeader">
+    <div class="pull-right settingsIcon">
+      <a href="home.html">
+        <span class="glyphicon glyphicon-remove headerGlyphicons"></span>
+      </a>
+    </div>
+    <div class="myCourses pull-left">
+      <h1>Settings</h1>
+    </div>
+  </div>
+  <div class="container-fluid myCourses">
+    <div tabindex="1"></div>
+    <div class="settings" id="settings">
+      <form action="javascript:">
+        <h3>Site Settings</h3>
+        <div class="form-group">
+          <label for="domainInput">Domain</label>
+          <span class="input-group">
+            <input type="text" id="domainInput" class="form-control"/>
+            <span class="input-group-btn">
+              <button class="btn btn-default" id="domainButton">Set</button>
+            </span>
+          </span>
+        </div>
+        <h3>Course Visibility</h3>
+        <div class="form-group">
+          <div class="radio">
+            <label><input type="radio" name="coursesVisibility" id="pinnedCourses" value="true"/>Show pinned courses only</label>
+          </div>
+          <div class="radio">
+            <label><input type="radio" name="coursesVisibility" id="allCourses" value="false"/>Show all courses</label>
+          </div>
+        </div>
+        <h3>Assignment Visibility</h3>
+        <div class="form-group">
+          <label for="pastRangeInput">Show assignments whose due date was within the last</label>
+          <select id="pastRangeInput" class="form-control"></select>
+          <label for="futureRangeInput">Show assignments whose due date is within the next</label>
+          <select id="futureRangeInput" class="form-control"></select>
+        </div>
+       </form>
+    </div>
+  </div>
+  <div class="alert alert-info myAlert-bottom" role="alert" style="display:none;">Settings saved successfully</div>
+</body>
 
 </html>

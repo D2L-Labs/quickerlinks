@@ -5,7 +5,8 @@ body {
 
 .myCourses {
 	color:#565a5c;
-	margin-left: 10px
+	margin-left: 10px;
+	margin-right: 10px;
 }
 
 .headerGlyphicons, .title {
@@ -25,10 +26,6 @@ body {
 .extLink a {
 	margin-top: .5rem;
 	color: #565a5c
-}
-
-.setting {
-	margin-top: 20px;
 }
 
 .notification {
@@ -90,10 +87,6 @@ body {
 	cursor: pointer;
 }
 
-.settingsContent {
-	margin-left: 15px;
-}
-
 .settingsIcon {
 	padding-top: 20px;
 	padding-right:10px;
@@ -111,4 +104,13 @@ body {
 .mainContainer {
 	padding-left:5px;
 	padding-right:5px;
+}
+
+.myAlert-bottom{
+    position: fixed;
+    bottom: 0px;
+    left:0px;
+    width: 100%;
+    margin-bottom:0px;
+    text-align: center;
 }

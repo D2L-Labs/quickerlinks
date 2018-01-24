@@ -69,32 +69,6 @@ function loadContent(courseInfo) {
     } else {
         displayCachedTopics(courseInfo)
     }
-    /*
-    $.ajax({
-        url: `${endpoint}/d2l/api/le/${leVersion}/${courseInfo.courseId}/content/toc`,
-        dataType: "json",
-        success: function(data) {
-            let modules = data.Modules;
-            for (let i=0; i<modules.length; i++) {
-                $('#modules').append(`<button id="${i}">${modules[i].Title}</button>`);
-            }
-            if (modules.length === 0) {
-                $('#modules').html('There are no modules in this course.');
-            }
-            else {
-                $('button').click(function() {
-                    let moduleId = $(this).attr('id');
-                    loadTopics(courseInfo, modules[moduleId]);
-                    functions.push(loadModules);
-                    currentState++;
-                });
-            }
-        },
-        error: function (e) {
-            console.log("Error: Not a valid URL.");
-        }
-    });
-    */
 }
 
 
@@ -162,65 +136,6 @@ function loadSubmissions(courseInfo) {
         }
     });
 }
-
-// function loadAnnouncements(courseInfo) {
-//     showDiv('announcements');
-//     $('#title').html(courseInfo.courseName);
-//     $('#title').attr('href', `${endpoint}/d2l/lms/news/main.d2l?ou=${courseInfo.courseId}`);
-//     $.ajax({
-//         url: `${endpoint}/d2l/api/le/${leVersion}/${courseInfo.courseId}/news/`,
-//         dataType: "json",
-//         success: function(announcements) {
-//             for (let i=0; i<announcements.length; i++) {
-//                 let url = `${endpoint}/d2l/le/news/${courseInfo.courseId}/${announcements[i].Id}/view`
-//                 $('#announcements').append(`<a href="${url}" target="_blank">${announcements[i].Title}</a>`);
-//             }
-//             if (announcements.length === 0) {
-//                 $('#announcements').html('There are no announcements in this course.');
-//             }
-//         },
-//         error: function (e) {
-//             console.log("Error: Not a valid URL.");
-//         }
-//     });
-// }
-//
-// function loadGrades(courseInfo) {
-//     showDiv('grades');
-//     $('#title').html(courseInfo.courseName);
-//     $.ajax({
-//         url: `${endpoint}/d2l/api/le/${leVersion}/${courseInfo.courseId}/grades/values/myGradeValues/`,
-//         dataType: "json",
-//         success: function(grades) {
-//             for (let i=0; i<grades.length; i++) {
-//                 $('#grades').append(`<h4>${grades[i].GradeObjectName}: ${grades[i].DisplayedGrade}</h4>`);
-//             }
-//             if (grades.length === 0) {
-//                 $('#grades').html('There are no grades in this course.');
-//             }
-//         },
-//         error: function (e) {
-//             console.log("Error: Not a valid URL.");
-//         }
-//     });
-// }
-
-// function loadTopics(courseInfo, moduleInfo) {
-//     showDiv('topics');
-//     $('#title').html(moduleInfo.Title);
-//     $('#title').attr('href', `${endpoint}/d2l/le/content/${courseInfo.courseId}/Home?itemIdentifier=D2L.LE.Content.ContentObject.ModuleCO-${moduleInfo.ModuleId}`);
-//     let topics = moduleInfo.Topics;
-//     for (let i=0; i<topics.length; i++) {
-//         let url = topics[i].Url;
-//         if (!url.startsWith("http")) {
-//             url = `${endpoint}${url}`;
-//         }
-//         $('#topics').append(`<a href="${url}" target="_blank">${moduleInfo.Topics[i].Title}</button>`);
-//     }
-//     if (topics.length === 0) {
-//         $('#topics').html('There are no topics in this module.');
-//     }
-// }
 
 function diffDate(date1, date2) {
     return Math.round((date2.getTime() - date1.getTime())/86400000);

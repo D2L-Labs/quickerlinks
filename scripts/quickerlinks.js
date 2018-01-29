@@ -5,93 +5,103 @@ let defaultFutureDays = 4;
 let defaultPastDays = 3;
 
 $(document).ready(function() {
-    if (!endpoint) {
-        inferEndpointFromTabs();
-    } else {
-        loadCourses();
-    }
-    checkIfAdmin();
-    if (isNaN(localStorage["quickerLinks.dropboxPastDays"])) {
-        localStorage["quickerLinks.dropboxPastDays"] = defaultPastDays;
-    }
-    if (isNaN(localStorage["quickerLinks.dropboxFutureDays"])) {
-        localStorage["quickerLinks.dropboxFutureDays"] = defaultFutureDays;
-    }
+  if (!endpoint) {
+    inferEndpointFromTabs();
+  } else {
+    loadCourses();
+  }
+  
+  checkIfAdmin();
+  
+  if (isNaN(localStorage["quickerLinks.dropboxPastDays"])) {
+    localStorage["quickerLinks.dropboxPastDays"] = defaultPastDays;
+  }
+    
+  if (isNaN(localStorage["quickerLinks.dropboxFutureDays"])) {
+    localStorage["quickerLinks.dropboxFutureDays"] = defaultFutureDays;
+  }
 });
 
 function checkIfAdmin() {
-    $.ajax({
-        url: `${endpoint}/d2l/api/lp/${lpVersion}/enrollments/myenrollments/?OrgUnitTypeId=1`,
-        dataType: 'json',
-        success: function (myenrollments) {
-            if (myenrollments.Items[0].Access.LISRoles.includes("urn:lti:instrole:ims/lis/Administrator")) {
-                localStorage["quickerLinks.isAdmin"] = 'true';
-                localStorage["quickerLinks.orgUnitId"] = myenrollments.Items[0].OrgUnit.Id;
-            }
-            else {
-                localStorage["quickerLinks.isAdmin"] = 'false';
-            }
-        },
-        error: function () {
-            console.log("Error: Not a valid URL.");
-        }
-    });
+  $.ajax({
+    url: `${endpoint}/d2l/api/lp/${lpVersion}/enrollments/myenrollments/?OrgUnitTypeId=1`,
+    dataType: 'json',
+    success: ( myenrollments ) => {
+      localStorage["quickerLinks.orgId"] = myenrollments.Items[0].OrgUnit.Id;
+      if (myenrollments.Items[0].Access.LISRoles.includes("urn:lti:instrole:ims/lis/Administrator")) {
+        localStorage["quickerLinks.isAdmin"] = true;
+      } else {
+        localStorage["quickerLinks.isAdmin"] = false;
+      }
+    },
+    error: () => {
+      console.log("Error: Not a valid URL.");
+    }
+  });
 }
 
 function inferEndpointFromTabs() {
-    let getWindows = new Promise(function(resolve, reject) {
-         chrome.windows.getAll(function(data) {
-             resolve(data);
-         });
-     });
+  let getWindows = new Promise( function(resolve, reject) {
+      chrome.windows.getAll( (data) => {
+          resolve(data);
+        });
+    });
 
-    getWindows.then(function(windows) {
-        let getAllTabs = windows.map(function (w) {
-            return new Promise(function(resolve, reject) {
-                chrome.tabs.query({windowId: w.id}, function (tabs) {
-                    resolve(tabs)
-                })
-            });
+  getWindows
+    .then( (windows) => {
+      let getAllTabs = windows.map( (w) => {
+        return new Promise( (resolve, reject) => {
+          chrome.tabs.query({windowId: w.id}, (tabs) => {
+            resolve(tabs)
+          })
         });
-        return Promise.all(getAllTabs)
-    }).then(function (tabs) {
-        tabs = tabs.reduce(function (a1, a2) { return a1.concat(a2) }) // Flatten array
-        tabs = tabs.filter(function (tab) { return ~tab.url.indexOf('/d2l/') })
-        if (tabs.length) {
-            localStorage["quickerLinks.domain"] = 'https://' + tabs[0].url.split('/')[2]
+      });
+      return Promise.all(getAllTabs)
+    })
+    .then( (tabs) => {
+      tabs = tabs.reduce( (a1, a2) => a1.concat(a2) ); // Flatten array
+      tabs = tabs.filter( (tab) => ( tab.url.indexOf('/d2l/') >= 0 ) );
+      if (tabs.length) {
+        localStorage["quickerLinks.domain"] = 'https://' + tabs[0].url.split('/')[2]
+      }
+      endpoint = localStorage["quickerLinks.domain"];
+      $.ajax({
+        url: `${endpoint}/d2l/api/lp/${lpVersion}/users/whoami`,
+        success: (response) => {
+          loadCourses();
+        },
+        error: () => {
+          $('#home').html(`<div class="panel panel-warning"><div class="panel-heading">Cannot find Brightspace</div><div class="panel-body">No domain has been set yet. <a href="settings.html">Click here</a> to change your settings, or log in to your Brightspace site in a new tab.</div></div>`);
         }
-        endpoint = localStorage["quickerLinks.domain"];
-        $.ajax({
-            url: `${endpoint}/d2l/api/lp/${lpVersion}/users/whoami`,
-            success: function (response) {
-                loadCourses();
-            },
-            error: function () {
-                $('#home').html(`<div class="panel panel-warning"><div class="panel-heading">Cannot find Brightspace</div><div class="panel-body">No domain has been set yet. <a href="settings.html">Click here</a> to change your settings, or log in to your Brightspace site in a new tab.</div></div>`);
-            }
-        });
+      });
     });
 }
 
 function loadCourses() {
     $('#title').attr('href', `${endpoint}/d2l/home`);
     $.ajax({
-        url: `${endpoint}/d2l/api/lp/${lpVersion}/enrollments/myenrollments/?OrgUnitTypeId=1,3&sortBy=-PinDate`,
-        dataType: "json",
-        success: function(data) {
-            let courses = data.Items;
-            let domainName = courses.filter(course => course.OrgUnit.Type.Id === 1)[0].OrgUnit.Name;
-            $('#title').html(domainName);
-            let pinnedCourses = courses.filter(course => (!(localStorage["quickerLinks.pinnedOnly"]==='true') || course.PinDate)).filter(course => course.OrgUnit.Type.Id === 3);
-            if (pinnedCourses.length === 0) {
-                if (localStorage["quickerLinks.pinnedOnly"]==='true') {
-                    $('#home').html(`<div class="panel panel-success"><div class="panel-heading">No pinned courses</div><div class="panel-body">Go to your Brightspace site and pin some courses.</div></div>`);
-                }
-                else {
-                    $('#home').html(`<div class="panel panel-success"><div class="panel-heading">No courses</div><div class="panel-body">You are not enrolled in any courses.</div></div>`);
-                }
-            }
-            let numRows = pinnedCourses.length / 2 + 1;
+      url: `${endpoint}/d2l/api/lp/${lpVersion}/enrollments/myenrollments/?OrgUnitTypeId=1,3&sortBy=-PinDate`,
+      dataType: "json",
+      success: (data) => {
+        let courses = data.Items;
+        let orgName = courses.filter(course => course.OrgUnit.Type.Id === 1)[0].OrgUnit.Name;
+        $('#title').html(orgName);
+
+        let pinnedCourses = courses.filter(course => (!(localStorage["quickerLinks.pinnedOnly"]==='true') || course.PinDate)).filter(course => course.OrgUnit.Type.Id === 3);
+        if (pinnedCourses.length === 0) {
+          let panelHeading, panelBody;
+          if (localStorage["quickerLinks.pinnedOnly"]==='true') {
+            panelHeading = 'No Pinned Courses';
+            panelBody = 'Go to your Brightspace site and pin some courses.';
+          } else {
+            panelHeading = 'No Courses';
+            panelBody = 'You are not enrolled in any courses.';
+          } 
+
+          $('#home').html(`<div class="panel panel-success"><div class="panel-heading">${panelHeading}</div><div class="panel-body">&{panelBody}</div></div>`);
+        }
+        
+        let numRows = pinnedCourses.length / 2 + 1;
 
             // Two courses take up one row.
             for (var i = 0; i < numRows; i++) {

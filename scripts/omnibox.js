@@ -4,6 +4,16 @@ let commandTrie = {
 }
 let trieInitialized = false;
 
+let standardCommands = [
+    { name: 'home', url: '/d2l/home', description: '<match>home</match> - Go to your home page'}
+];
+
+let adminCommands = [
+    { name: 'users', url: '/d2l/lp/manageUsers/main.d2l', description: '<match>users</match> - Go to Manage Users'},
+    { name: 'sel', url: '/d2l/logging', description: '<match>sel</match> - Go to the System Error Log'},
+    { name: 'cvb', url: '/d2l/lp/configVariableBrowser', description: '<match>cvb</match> - Go to the Config Variable Browser'}
+];
+
 function insertSuggestion(trie, toInsert) {
     let cmd = toInsert.command;
     let suggestion = toInsert.suggestion;
@@ -45,40 +55,22 @@ function getAllChildrenSuggestions(trieNode, suggestions) {
 
 
 function initTrie() {
-    let orgUnitId = localStorage["quickerLinks.orgUnitId"];
-    let domain = localStorage["quickerLinks.domain"];
+  let domain = localStorage["quickerLinks.domain"];
+  let aCommands, command;
 
+  aCommands = standardCommands.concat( (localStorage["quickerLinks.isAdmin"] ) ? adminCommands : [] );
+  for( let i=0; i<aCommands.length; i++ ) {
+    command = aCommands[i];
     insertSuggestion(commandTrie, {
-        command: "home",
+        command: command.name,
         suggestion: {
-            content: `${domain}/d2l/home`,
-            description: 'home - Your home page'
+          content: `${command.name}`,
+          description: command.description
         }
-    })
+      });
+  }
 
-    insertSuggestion(commandTrie, {
-        command: "users",
-        suggestion: {
-            content: `${domain}/d2l/lp/manageUsers/main.d2l?ou=${orgUnitId}`,
-            description: 'users - Manage the users'
-        }
-    });
-
-    insertSuggestion(commandTrie, {
-        command: "sel",
-        suggestion: {
-            content: `${domain}/d2l/logging`,
-            description: 'sel - System error log'
-        }
-    });
-
-    insertSuggestion(commandTrie, {
-        command: "config",
-        suggestion: {
-            content: `${domain}/d2l/lp/configVariableBrowser`,
-            description: 'config - Config variable browser'
-        }
-    });
+  chrome.omnibox.setDefaultSuggestion({description:`<dim>QuickerLinks - getting you to where you are going, quicker than quick.</dim>`});
 }
 
 chrome.omnibox.onInputStarted.addListener(function() {
@@ -88,39 +80,27 @@ chrome.omnibox.onInputStarted.addListener(function() {
     }
 });
 
-chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
+chrome.omnibox.onInputChanged.addListener( (text, suggest) => {
     suggest(getSuggestions(commandTrie, text));
 });
 
-chrome.omnibox.onInputEntered.addListener(function(command) {
-    let url = ''
-    let orgUnitId = localStorage["quickerLinks.orgUnitId"];
-    let domain = localStorage["quickerLinks.domain"];
-    if (command === 'home') {
-        url = `${domain}/d2l/home`;
-    } else {
-        if (localStorage["quickerLinks.isAdmin"] === 'true') {
-            if (command === 'config') {
-                url =  `${domain}/d2l/lp/configVariableBrowser`;
-            }
-            else if (command === 'users') {
-                url = `${domain}/d2l/lp/manageUsers/main.d2l?ou=${orgUnitId}`;
-            }
-            else if (command === 'sel') {
-                url = `${domain}/d2l/logging`;
-            }
-            else if (command.startsWith('http')) {
-                url = command;
-            }
-            else {
-                console.log('No matching command.');
-            }
-        }
-        else {
-            console.log(`Access denied. Not an admin for ${endpoint}`);
-        }
+chrome.omnibox.onInputEntered.addListener( (inCommand) => {
+  let domain = localStorage["quickerLinks.domain"];
+  let aCommands, command, url;
+
+  aCommands = standardCommands.concat( (localStorage["quickerLinks.isAdmin"] ) ? adminCommands : [] );
+
+  for( let i=0; i<aCommands.length; i++ ) {
+    command = aCommands[i];
+    if( command.name == inCommand ) {
+        url = `${domain}${command.url}`;
+        break;
     }
-    if (url) {
-        chrome.tabs.update({url});
-    }
+  }
+
+  if( url ) {
+    chrome.tabs.update({url});
+  } else {
+     console.log('No matching command available.');
+  }
 });

@@ -51,10 +51,10 @@ function loadContent(courseInfo) {
         topicsCache = {}
         chrome.history.search({text: 'd2l'}, function (data) {
             data.filter(function (item) {
-                return ~item.url.indexOf(endpoint) && ~item.url.indexOf('viewContent')
+                return ( item.url.indexOf(endpoint) >=0 ) && ( item.url.indexOf('viewContent') >= 0 );
             }).forEach(function (historyItem) {
                 // In le version, the URL for viewed content looks similar to the example below
-                // https://d2llabs.desire2learn.com/d2l/le/content/8432/viewContent/1055235/View
+                // https://{domain}/d2l/le/content/{orgUnitId}/viewContent/{topicId}/View
                 // So by splitting on the '/' character, we can obtain the org unit
                 // by looking at the 6th index of the resulting array
                 orgUnit = historyItem.url.split('/')[6];
@@ -75,11 +75,12 @@ function loadContent(courseInfo) {
 function displayCachedTopics(courseInfo) {
     $('#recentContent').append('<div id="recentView"></div>')
     if (topicsCache[courseInfo.courseId]) { // If there are any available links for this org unit
+        $('#recentView').append('<div id="recentViewList" class="list-group"></div>');
         topicsCache[courseInfo.courseId].forEach(function (historyItem) {
-            $('#recentContent').children('#recentView').append(`<div class="contentItem"><a href="${historyItem.url}" target="_blank">${historyItem.title}</a></div>`)
+            $('#recentViewList').append(`<a href="${historyItem.url}" class="list-group-item" target="_blank">${historyItem.title}</a>`);
         })
     } else { // else display no recently visited topics message
-        $('#recentContent').children('#recentView').append(`<div class="contentItem">No recently viewed links from this course</div>`);
+        $('#recentContent').children('#recentView').append(`<div>No recently viewed links from this course</div>`);
     }
 }
 
@@ -117,18 +118,22 @@ function loadSubmissions(courseInfo) {
         dataType: "json",
         success: function(folders) {
             let foundAssignments = false;
+            $('#assignments').append('<div id="assignmentsView"></div>');
             for (let i=0; i<folders.length; i++) {
                 //null duedates excluded
                 if (folders[i].DueDate) {
                     let diff = diffDate(new Date(), new Date(folders[i].DueDate))
                     if (diff < localStorage["quickerLinks.dropboxFutureDays"] && diff > -1*localStorage["quickerLinks.dropboxPastDays"]) {
-                        $('#assignments').append(`<div class="contentItem"><a href="${endpoint}/d2l/lms/dropbox/user/folder_submit_files.d2l?db=${folders[i].Id}&ou=${courseInfo.courseId}" target="_blank">${folders[i].Name}</a></div>`)
+                        if(!foundAssignments) {
+                            $('#assignmentsView').append('<div id="assignmentsViewList" class="list-group"></div>');
+                        }
+                        $('#assignmentsViewList').append(`<a class="list-group-item" href="${endpoint}/d2l/lms/dropbox/user/folder_submit_files.d2l?db=${folders[i].Id}&ou=${courseInfo.courseId}" target="_blank">${folders[i].Name}</a>`)
                         foundAssignments = true;
                     }
                 }
             }
             if (!foundAssignments) {
-                $('#assignments').append(`<div class="contentItem">No assignments found in specified date range.</div>`)
+                $('#assignmentsView').append(`<div>No assignments found in specified date range.</div>`)
             }
         },
         error: function (e) {

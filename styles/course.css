@@ -8,10 +8,6 @@ body {
 	justify-content: space-between;
 }
 
-.courseTitle {
-	/*margin-top: 110px;*/
-}
-
 .courseHeader {
 	padding-left: 15px;
 	padding-right: 15px;
@@ -25,18 +21,9 @@ body {
 	color: #FFFFFF;
 }
 
-.subheading {
-	margin: 20px 15px 10px 15px;
-	font-size: 130%;
-}
-
-.contentItem {
-	font-size: 70%;
-}
-
 .headerGlyphicons, .title {
 	margin-top: 10px;
-    font-size: 180%;
+  font-size: 180%;
 }
 
 #back:hover {

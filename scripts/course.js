@@ -53,7 +53,7 @@ function loadContent(courseInfo) {
     topicsCache = {}
     chrome.history.search({text: 'd2l'}, function (data) {
       data.filter(function (item) {
-        return ( item.url.indexOf(endpoint) >=0 ) && ( item.url.indexOf('viewContent') >= 0 );
+        return ( item.url.indexOf(endpoint) >=0 ) && (( item.url.indexOf('viewContent') >= 0 ) || ( item.url.indexOf('/d2l/le/lessons/') >= 0 ));
       }).forEach(function (historyItem) {
         // In le version, the URL for viewed content looks similar to the example below
         // https://{domain}/d2l/le/content/{orgUnitId}/viewContent/{topicId}/View

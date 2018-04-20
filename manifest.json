@@ -11,6 +11,7 @@
 	"browser_action": {
 		"default_popup": "home.html"
 	},
+  "scripts": ["scripts/quickerlinksSettings.js", "scripts/course.js", "scripts/omnibox.js", "scripts/settings.js", "scripts/home.js"],
 	"permissions": [
    		"activeTab",
    		"tabs",
@@ -18,9 +19,5 @@
    		"https://*/*",
 		"history",
 		"tabs"
-   	],
-	"background": {
-    	"scripts": ["scripts/quickerlinks.js", "scripts/course.js", "scripts/omnibox.js"],
-     	"persistent": false
-   	}
+   	]
 }

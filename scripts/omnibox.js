@@ -55,10 +55,11 @@ function getAllChildrenSuggestions(trieNode, suggestions) {
 
 
 function initTrie() {
-  let domain = localStorage["quickerLinks.domain"];
+  let domain = localStorage[quickerLinks.domain.name];
   let aCommands, command;
 
-  aCommands = standardCommands.concat( (localStorage["quickerLinks.isAdmin"] ) ? adminCommands : [] );
+  let isAdmin = localStorage[quickerLinks.isAdmin.name] === 'true';
+  aCommands = standardCommands.concat( (isAdmin) ? adminCommands : [] );
   for( let i=0; i<aCommands.length; i++ ) {
     command = aCommands[i];
     insertSuggestion(commandTrie, {
@@ -85,10 +86,11 @@ chrome.omnibox.onInputChanged.addListener( (text, suggest) => {
 });
 
 chrome.omnibox.onInputEntered.addListener( (inCommand) => {
-  let domain = localStorage["quickerLinks.domain"];
+  let domain = localStorage[quickerLinks.domain.name];
   let aCommands, command, url;
 
-  aCommands = standardCommands.concat( (localStorage["quickerLinks.isAdmin"] ) ? adminCommands : [] );
+  let isAdmin = localStorage[quickerLinks.isAdmin.name] === 'true';
+  aCommands = standardCommands.concat( (isAdmin) ? adminCommands : [] );
 
   for( let i=0; i<aCommands.length; i++ ) {
     command = aCommands[i];

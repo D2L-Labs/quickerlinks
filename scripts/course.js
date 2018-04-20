@@ -1,6 +1,4 @@
-let endpoint = localStorage["quickerLinks.domain"];
-let leVersion = '1.24';
-let lpVersion = '1.20';
+let endpoint = localStorage[quickerLinksSettings.domain.name];
 let topicsCache = null;
 
 $(document).ready(function() {
@@ -84,6 +82,8 @@ function displayCachedTopics(courseInfo) {
   } else { // else display no recently visited topics message
     $('#recentContent').children('#recentView').append(`<div>No recently viewed links from this course</div>`);
   }
+
+  $('#recentContent').children('#recentView').append('<div class="gotoContent"><a href="">&gt; Go to content</a></div>');
 }
 
 function loadUpdates(courseInfo) {

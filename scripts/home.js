@@ -1,8 +1,4 @@
-let endpoint = localStorage["quickerLinks.domain"];
-let leVersion = '1.24';
-let lpVersion = '1.20';
-let defaultFutureDays = 4;
-let defaultPastDays = 3;
+let endpoint = localStorage[quickerLinksSettings.domain.name];
 
 $(document).ready(function() {
   if (!endpoint) {
@@ -12,33 +8,7 @@ $(document).ready(function() {
   }
   
   checkIfAdmin();
-  
-  if (isNaN(localStorage["quickerLinks.dropboxPastDays"])) {
-    localStorage["quickerLinks.dropboxPastDays"] = defaultPastDays;
-  }
-    
-  if (isNaN(localStorage["quickerLinks.dropboxFutureDays"])) {
-    localStorage["quickerLinks.dropboxFutureDays"] = defaultFutureDays;
-  }
 });
-
-function checkIfAdmin() {
-  $.ajax({
-    url: `${endpoint}/d2l/api/lp/${lpVersion}/enrollments/myenrollments/?OrgUnitTypeId=1`,
-    dataType: 'json',
-    success: ( myenrollments ) => {
-      localStorage["quickerLinks.orgId"] = myenrollments.Items[0].OrgUnit.Id;
-      if (myenrollments.Items[0].Access.LISRoles.includes("urn:lti:instrole:ims/lis/Administrator")) {
-        localStorage["quickerLinks.isAdmin"] = true;
-      } else {
-        localStorage["quickerLinks.isAdmin"] = false;
-      }
-    },
-    error: () => {
-      console.log("Error: Not a valid URL.");
-    }
-  });
-}
 
 function inferEndpointFromTabs() {
   let getWindows = new Promise( function(resolve, reject) {
@@ -62,9 +32,9 @@ function inferEndpointFromTabs() {
       tabs = tabs.reduce( (a1, a2) => a1.concat(a2) ); // Flatten array
       tabs = tabs.filter( (tab) => ( tab.url.indexOf('/d2l/') >= 0 ) );
       if (tabs.length) {
-        localStorage["quickerLinks.domain"] = 'https://' + tabs[0].url.split('/')[2]
+        localStorage[quickerLinksSettings.domain.name] = 'https://' + tabs[0].url.split('/')[2]
       }
-      endpoint = localStorage["quickerLinks.domain"];
+      endpoint = localStorage[quickerLinksSettings.domain.name];
       $.ajax({
         url: `${endpoint}/d2l/api/lp/${lpVersion}/users/whoami`,
         success: (response) => {
@@ -87,10 +57,18 @@ function loadCourses() {
         let orgName = courses.filter(course => course.OrgUnit.Type.Id === 1)[0].OrgUnit.Name;
         $('#title').html(orgName);
 
-        let pinnedCourses = courses.filter(course => (!(localStorage["quickerLinks.pinnedOnly"]==='true') || course.PinDate)).filter(course => course.OrgUnit.Type.Id === 3);
-        if (pinnedCourses.length === 0) {
+        let displayCourses;
+        
+        let pinnedOnly = (localStorage[quickerLinksSettings.pinnedOnly.name] === 'true');
+        if( pinnedOnly ) {
+          displayCourses = courses.filter(course => (course.PinDate && (course.OrgUnit.Type.Id ===3) ) );
+        } else {
+          displayCourses = courses.filter(course => (course.OrgUnit.Type.Id === 3));
+        }
+
+        if (displayCourses.length === 0) {
           let panelHeading, panelBody;
-          if (localStorage["quickerLinks.pinnedOnly"]==='true') {
+          if (pinnedOnly) {
             panelHeading = 'No Pinned Courses';
             panelBody = 'Go to your Brightspace site and pin some courses.';
           } else {
@@ -101,7 +79,7 @@ function loadCourses() {
           $('#home').html(`<div class="panel panel-success"><div class="panel-heading">${panelHeading}</div><div class="panel-body">&{panelBody}</div></div>`);
         }
         
-        let numRows = pinnedCourses.length / 2 + 1;
+        let numRows = displayCourses.length / 2 + 1;
 
             // Two courses take up one row.
             for (var i = 0; i < numRows; i++) {
@@ -113,11 +91,12 @@ function loadCourses() {
 
             // Append course to every column
             $(".col-xs-6").each(function (index) {
-                if (index >= pinnedCourses.length) return;
+                if (index >= displayCourses.length) return;
 
-                let image = pinnedCourses[index].OrgUnit.ImageUrl || "https://d2q79iu7y748jz.cloudfront.net/s/_logo/2b6d922805d2214befee400b8bb5de7f.png";
-                let title = pinnedCourses[index].OrgUnit.Name;
-                let id = pinnedCourses[index].OrgUnit.Id;
+                let currentCourse = displayCourses[index].OrgUnit;
+                let image = currentCourse.ImageUrl || "https://d2q79iu7y748jz.cloudfront.net/s/_logo/2b6d922805d2214befee400b8bb5de7f.png";
+                let title = currentCourse.Name;
+                let id = currentCourse.Id;
 
                 if (!image) {
                     // Set to default

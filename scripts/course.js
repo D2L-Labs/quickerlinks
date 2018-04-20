@@ -1,6 +1,4 @@
-let endpoint = localStorage["quickerLinks.domain"];
-let leVersion = '1.24';
-let lpVersion = '1.20';
+let endpoint = localStorage[quickerLinksSettings.domain.name];
 let topicsCache = null;
 
 $(document).ready(function() {
@@ -53,7 +51,7 @@ function loadContent(courseInfo) {
     topicsCache = {}
     chrome.history.search({text: 'd2l'}, function (data) {
       data.filter(function (item) {
-        return ( item.url.indexOf(endpoint) >=0 ) && ( item.url.indexOf('viewContent') >= 0 );
+        return ( item.url.indexOf(endpoint) >=0 ) && (( item.url.indexOf('viewContent') >= 0 ) || ( item.url.indexOf('/d2l/le/lessons/') >= 0 ));
       }).forEach(function (historyItem) {
         // In le version, the URL for viewed content looks similar to the example below
         // https://{domain}/d2l/le/content/{orgUnitId}/viewContent/{topicId}/View
@@ -84,6 +82,8 @@ function displayCachedTopics(courseInfo) {
   } else { // else display no recently visited topics message
     $('#recentContent').children('#recentView').append(`<div>No recently viewed links from this course</div>`);
   }
+
+  $('#recentContent').children('#recentView').append(`<div class="gotoContent"><a href="${endpoint}/d2l/le/content/${courseInfo.courseId}/Home" target="_blank" >Go to content</a></div>`);
 }
 
 function loadUpdates(courseInfo) {

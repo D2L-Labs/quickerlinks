@@ -83,7 +83,7 @@ function displayCachedTopics(courseInfo) {
     $('#recentContent').children('#recentView').append(`<div>No recently viewed links from this course</div>`);
   }
 
-  $('#recentContent').children('#recentView').append('<div class="gotoContent"><a href="">&gt; Go to content</a></div>');
+  $('#recentContent').children('#recentView').append(`<div class="gotoContent"><a href="${endpoint}/d2l/le/content/${courseInfo.courseId}/Home" target="_blank" >Go to content</a></div>`);
 }
 
 function loadUpdates(courseInfo) {

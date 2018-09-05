@@ -19,7 +19,7 @@
 		  "history"
    	],
 	"background": {
-    	"scripts": ["scripts/quickerlinks.js", "scripts/course.js", "scripts/omnibox.js"],
+    	"scripts": ["scripts/quickerlinks.js", "scripts/course.js", "scripts/omnibox.js", "scripts/settings.js", "scripts/home.js"],
      	"persistent": false
    	}
 }

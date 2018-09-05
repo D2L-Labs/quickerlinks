@@ -9,8 +9,10 @@
   <script src="scripts/popper.js"></script>
   <script src="scripts/bootstrap.min.js"></script>
   <script src="scripts/quickerlinksSettings.js"></script>
+  <script src="scripts/settings.js"></script>
+  <link rel="stylesheet" href="styles/quickerlinks.css">
+  <link rel="stylesheet" href="styles/settings.css">
   <link rel="stylesheet" href="styles/bootstrap.min.css">
-  <link rel="stylesheet" href="styles/home.css">
 </head>
 <body>
   <div id="homeHeader" class="container-fluid homeHeader">
@@ -26,9 +28,9 @@
   <div class="container-fluid myCourses">
     <div tabindex="1"></div>
     <div class="settings" id="settings">
-      <form action="javascript:">
+      
         <h3>Site Settings</h3>
-        <div class="form-group">
+        <div class="form-group" id="domain">
           <label for="domainInput">Domain</label>
           <span class="input-group">
             <input type="text" id="domainInput" class="form-control"/>
@@ -40,10 +42,10 @@
         <h3>Course Visibility</h3>
         <div class="form-group">
           <div class="radio">
-            <label><input type="radio" name="coursesVisibility" id="pinnedCourses" value="true"/>Show pinned courses only</label>
+            <label><input type="radio" name="coursesVisibility" id="pinnedCourses" value="1"/>Show pinned courses only</label>
           </div>
           <div class="radio">
-            <label><input type="radio" name="coursesVisibility" id="allCourses" value="false"/>Show all courses</label>
+            <label><input type="radio" name="coursesVisibility" id="allCourses" value="0"/>Show all courses</label>
           </div>
         </div>
         <h3>Assignment Visibility</h3>
@@ -55,7 +57,7 @@
           <label for="futureRangeInput">Show assignments whose due date is within the next</label>
           <select id="futureRangeInput" class="form-control"></select>
         </div>
-       </form>
+      
     </div>
   </div>
   <div class="alert alert-info myAlert-bottom" role="alert" style="display:none;">Settings saved successfully</div>

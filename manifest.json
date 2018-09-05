@@ -4,7 +4,7 @@
 	"short_name": "QuickerLinks",
 	"version": "0.0.0.1",
 	"description": "An experimental chrome extension built by D2L Labs. This extension is not supported and is provided as-is, and without warranty.",
-	"omnibox": { "keyword" : "d2l" },
+	"omnibox": { "keyword" : "ql" },
 	"icons": {
 		"128": "styles/images/icon-128.png"
 	},
@@ -16,8 +16,7 @@
    		"tabs",
    		"http://*/*",
    		"https://*/*",
-		"history",
-		"tabs"
+		  "history"
    	],
 	"background": {
     	"scripts": ["scripts/quickerlinks.js", "scripts/course.js", "scripts/omnibox.js"],

@@ -1,4 +1,4 @@
-let endpoint = localStorage[quickerLinksSettings.domain.name];
+let courseEndpoint = localStorage[quickerLinksSettings.domain.name];
 let topicsCache = null;
 
 $(document).ready(function() {
@@ -8,7 +8,7 @@ $(document).ready(function() {
   let courseId = window.location.search.substring(courseStart + 3, nameStart - 1);
   let courseName = window.location.search.substring(nameStart + 5).replace(new RegExp('%20', 'g'), ' ')
   let courseInfo = {courseId, courseName}
-  $(".dropdown-item").attr('href', `${endpoint}/d2l/home/${courseId}`)
+  $(".dropdown-item").attr('href', `${courseEndpoint}/d2l/home/${courseId}`)
   loadCourse(courseInfo)
   $('#back').click(function() {
     window.location.href = 'home.html'
@@ -18,11 +18,11 @@ $(document).ready(function() {
 
 function loadCourse(courseInfo) {
   $.ajax({
-    url: `${endpoint}/d2l/api/lp/${lpVersion}/enrollments/myenrollments/${courseInfo.courseId}`,
+    url: `${courseEndpoint}/d2l/api/lp/${lpVersion}/enrollments/myenrollments/${courseInfo.courseId}`,
     dataType: "json",
     success: function(data) {
       $('#title').html(courseInfo.courseName);
-      $('#title').attr('href', `${endpoint}/d2l/home/${courseInfo.courseId}`);
+      $('#title').attr('href', `${courseEndpoint}/d2l/home/${courseInfo.courseId}`);
       let image = data.OrgUnit.ImageUrl || "https://d2q79iu7y748jz.cloudfront.net/s/_logo/2b6d922805d2214befee400b8bb5de7f.png";
       // $('#courseHeader').css('background-image', `url("${image}")`);
       $('#courseHeader').css('width', window.innerWidth);
@@ -51,7 +51,7 @@ function loadContent(courseInfo) {
     topicsCache = {}
     chrome.history.search({text: 'd2l'}, function (data) {
       data.filter(function (item) {
-        return ( item.url.indexOf(endpoint) >=0 ) && (( item.url.indexOf('viewContent') >= 0 ) || ( item.url.indexOf('/d2l/le/lessons/') >= 0 ));
+        return ( item.url.indexOf(courseEndpoint) >=0 ) && (( item.url.indexOf('viewContent') >= 0 ) || ( item.url.indexOf('/d2l/le/lessons/') >= 0 ));
       }).forEach(function (historyItem) {
         // In le version, the URL for viewed content looks similar to the example below
         // https://{domain}/d2l/le/content/{orgUnitId}/viewContent/{topicId}/View
@@ -83,20 +83,20 @@ function displayCachedTopics(courseInfo) {
     $('#recentContent').children('#recentView').append(`<div>No recently viewed links from this course</div>`);
   }
 
-  $('#recentContent').children('#recentView').append(`<div class="gotoContent"><a href="${endpoint}/d2l/le/content/${courseInfo.courseId}/Home" target="_blank" >Go to content</a></div>`);
+  $('#recentContent').children('#recentView').append(`<div class="gotoContent"><a href="${courseEndpoint}/d2l/le/content/${courseInfo.courseId}/Home" target="_blank" >Go to content</a></div>`);
 }
 
 function loadUpdates(courseInfo) {
   $.ajax({
-    url: `${endpoint}/d2l/api/le/${leVersion}/${courseInfo.courseId}/updates/myUpdates`,
+    url: `${courseEndpoint}/d2l/api/le/${leVersion}/${courseInfo.courseId}/updates/myUpdates`,
     dataType: "json",
     success: function(data) {
       let badgeNums = [data.UnreadDiscussions, data.UnreadAssignmentFeedback, data.UnattemptedQuizzes]
       $('#course').prepend(`<ul id="badges" class="nav nav-pills"></ul>`);
-      $('#badges').append(`<li><a id="badge-0" class="badges" href="${endpoint}/d2l/le/${courseInfo.courseId}/discussions/List" target="_blank" >Discussions </a></li>`);
-      $('#badges').append(`<li><a id="badge-1" class="badges" href="${endpoint}/d2l/lms/dropbox/dropbox.d2l?ou=${courseInfo.courseId}" target="_blank" >Assignments </a></li>`);
-      $('#badges').append(`<li><a id="badge-2" class="badges" href="${endpoint}/d2l/lms/quizzing/user/quizzes_list.d2l?ou=${courseInfo.courseId}" target="_blank" >Quizzes </a></li>`);
-      $('#badges').append(`<li><a id="badge-3" class="badges" href="${endpoint}/d2l/lms/grades/my_grades/main.d2l?ou=${courseInfo.courseId}" target="_blank" >Grades</a></li>`);
+      $('#badges').append(`<li><a id="badge-0" class="badges" href="${courseEndpoint}/d2l/le/${courseInfo.courseId}/discussions/List" target="_blank" >Discussions </a></li>`);
+      $('#badges').append(`<li><a id="badge-1" class="badges" href="${courseEndpoint}/d2l/lms/dropbox/dropbox.d2l?ou=${courseInfo.courseId}" target="_blank" >Assignments </a></li>`);
+      $('#badges').append(`<li><a id="badge-2" class="badges" href="${courseEndpoint}/d2l/lms/quizzing/user/quizzes_list.d2l?ou=${courseInfo.courseId}" target="_blank" >Quizzes </a></li>`);
+      $('#badges').append(`<li><a id="badge-3" class="badges" href="${courseEndpoint}/d2l/lms/grades/my_grades/main.d2l?ou=${courseInfo.courseId}" target="_blank" >Grades</a></li>`);
 
       let updateCount, updateDisplay;
       for (let i=0; i<badgeNums.length; i++) {
@@ -116,7 +116,7 @@ function loadUpdates(courseInfo) {
 
 function loadSubmissions(courseInfo) {
   $.ajax({
-    url: `${endpoint}/d2l/api/le/${leVersion}/${courseInfo.courseId}/dropbox/folders/`,
+    url: `${courseEndpoint}/d2l/api/le/${leVersion}/${courseInfo.courseId}/dropbox/folders/`,
     dataType: "json",
     success: function(folders) {
       let foundAssignments = false;
@@ -129,7 +129,7 @@ function loadSubmissions(courseInfo) {
             if(!foundAssignments) {
               $('#assignmentsView').append('<div id="assignmentsViewList" class="list-group"></div>');
             }
-            $('#assignmentsViewList').append(`<a class="list-group-item" href="${endpoint}/d2l/lms/dropbox/user/folder_submit_files.d2l?db=${folders[i].Id}&ou=${courseInfo.courseId}" target="_blank">${folders[i].Name}</a>`)
+            $('#assignmentsViewList').append(`<a class="list-group-item" href="${courseEndpoint}/d2l/lms/dropbox/user/folder_submit_files.d2l?db=${folders[i].Id}&ou=${courseInfo.courseId}" target="_blank">${folders[i].Name}</a>`)
             foundAssignments = true;
           }
         }

@@ -36,11 +36,11 @@ for( setting in quickerLinksSettings ) {
 }
 
 function checkIfAdmin(callbackSuccess, callbackError) {
-  let endpoint = localStorage[quickerLinksSettings.domain.name];
+  let settingsEndpoint = localStorage[quickerLinksSettings.domain.name];
   let isAdminCurrent = localStorage[quickerLinksSettings.isAdmin.name];
   if( isAdminCurrent === undefined || isAdminCurrent === 'undefined' ) {
     $.ajax({
-      url: `${endpoint}/d2l/api/lp/${lpVersion}/enrollments/myenrollments/?OrgUnitTypeId=1`,
+      url: `${settingsEndpoint}/d2l/api/lp/${lpVersion}/enrollments/myenrollments/?OrgUnitTypeId=1`,
       dataType: 'json',
       success: ( myenrollments ) => {
         localStorage[quickerLinksSettings.orgId.name] = myenrollments.Items[0].OrgUnit.Id;

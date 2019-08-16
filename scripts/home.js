@@ -1,7 +1,7 @@
-let endpoint = localStorage[quickerLinksSettings.domain.name];
+let homeEndpoint = localStorage[quickerLinksSettings.domain.name];
 
 $(document).ready(function() {
-  if (!endpoint) {
+  if (!homeEndpoint) {
     inferEndpointFromTabs();
   } else {
     loadCourses();
@@ -34,9 +34,9 @@ function inferEndpointFromTabs() {
       if (tabs.length) {
         localStorage[quickerLinksSettings.domain.name] = 'https://' + tabs[0].url.split('/')[2]
       }
-      endpoint = localStorage[quickerLinksSettings.domain.name];
+      homeEndpoint = localStorage[quickerLinksSettings.domain.name];
       $.ajax({
-        url: `${endpoint}/d2l/api/lp/${lpVersion}/users/whoami`,
+        url: `${homeEndpoint}/d2l/api/lp/${lpVersion}/users/whoami`,
         success: (response) => {
           loadCourses();
         },
@@ -48,9 +48,9 @@ function inferEndpointFromTabs() {
 }
 
 function loadCourses() {
-    $('#title').attr('href', `${endpoint}/d2l/home`);
+    $('#title').attr('href', `${homeEndpoint}/d2l/home`);
     $.ajax({
-      url: `${endpoint}/d2l/api/lp/${lpVersion}/enrollments/myenrollments/?OrgUnitTypeId=1,3&sortBy=-PinDate`,
+      url: `${homeEndpoint}/d2l/api/lp/${lpVersion}/enrollments/myenrollments/?OrgUnitTypeId=1,3&sortBy=-PinDate`,
       dataType: "json",
       success: (data) => {
         let courses = data.Items;
@@ -115,7 +115,7 @@ function loadCourses() {
                                         </div>
                                         </a>
                                         <ul class="dropdown-menu menu">
-                                            <li><a class="dropdown-item" href="${endpoint}/d2l/home/${id}" target="_blank">Go to course</a></li>
+                                            <li><a class="dropdown-item" href="${homeEndpoint}/d2l/home/${id}" target="_blank">Go to course</a></li>
                                         </ul>
                                     </div>
                                     <a href="course.html?ou=${id}&name=${title}" id="${id}">
@@ -127,7 +127,7 @@ function loadCourses() {
                                 </div>`);
                 let updateParent = $(this).children('div').children('.extLink');
                 $.ajax({
-                    url: `${endpoint}/d2l/api/le/${leVersion}/${id}/updates/myUpdates`,
+                    url: `${homeEndpoint}/d2l/api/le/${leVersion}/${id}/updates/myUpdates`,
                     success: function (d) {
                         let updatesCount = d.UnreadDiscussions + d.UnattemptedQuizzes + d.UnreadAssignmentFeedback
                         if (updatesCount) {
@@ -149,7 +149,7 @@ function loadCourses() {
             });
         },
         error: function (e) {
-            $('#home').html(`<div class="panel panel-info"><div class="panel-heading">Not logged in</div><div class="panel-body"><a href="${endpoint}/d2l/login" target="_blank">Click here</a> to go to your Brightspace site and log in.</div></div>`);
+            $('#home').html(`<div class="panel panel-info"><div class="panel-heading">Not logged in</div><div class="panel-body"><a href="${homeEndpoint}/d2l/login" target="_blank">Click here</a> to go to your Brightspace site and log in.</div></div>`);
             console.log("Error: Not a valid URL.");
         }
     });

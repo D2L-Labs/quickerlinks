@@ -76,7 +76,7 @@ function loadCourses() {
             panelBody = 'You are not enrolled in any courses.';
           } 
 
-          $('#home').html(`<div class="panel panel-success"><div class="panel-heading">${panelHeading}</div><div class="panel-body">&{panelBody}</div></div>`);
+          $('#home').html(`<div class="panel panel-success"><div class="panel-heading">${panelHeading}</div><div class="panel-body">${panelBody}</div></div>`);
         }
         
         let numRows = displayCourses.length / 2 + 1;

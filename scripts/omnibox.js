@@ -10,7 +10,7 @@ let standardCommands = [
 
 let adminCommands = [
   { name: 'users', url: '/d2l/lp/manageUsers/main.d2l', description: '<match>users</match> - Go to Manage Users'},
-  { name: 'sel', url: '/d2l/logging', description: '<match>sel</match> - Go to the System Error Log'},
+  { name: 'syslog', url: '/d2l/logging', description: '<match>syslog</match> - Go to the System Log'},
   { name: 'cvb', url: '/d2l/lp/configVariableBrowser', description: '<match>cvb</match> - Go to the Config Variable Browser'}
 ];
 
@@ -55,11 +55,13 @@ function getAllChildrenSuggestions(trieNode, suggestions) {
 
 
 function initTrie() {
-  let domain = localStorage[quickerLinks.domain.name];
+  let domain = localStorage[quickerLinksSettings.domain.name];
   let aCommands, command;
 
-  let isAdmin = localStorage[quickerLinks.isAdmin.name] === 'true';
+  let isAdmin = localStorage[quickerLinksSettings.isAdmin.name] === 'true';
+
   aCommands = standardCommands.concat( (isAdmin) ? adminCommands : [] );
+
   for( let i=0; i<aCommands.length; i++ ) {
     command = aCommands[i];
     insertSuggestion(commandTrie, {
@@ -86,10 +88,10 @@ chrome.omnibox.onInputChanged.addListener( (text, suggest) => {
 });
 
 chrome.omnibox.onInputEntered.addListener( (inCommand) => {
-  let domain = localStorage[quickerLinks.domain.name];
+  let domain = localStorage[quickerLinksSettings.domain.name];
   let aCommands, command, url;
 
-  let isAdmin = localStorage[quickerLinks.isAdmin.name] === 'true';
+  let isAdmin = localStorage[quickerLinksSettings.isAdmin.name] === 'true';
   aCommands = standardCommands.concat( (isAdmin) ? adminCommands : [] );
 
   for( let i=0; i<aCommands.length; i++ ) {

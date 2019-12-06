@@ -23,7 +23,10 @@ function loadCourse(courseInfo) {
     success: function(data) {
       $('#title').html(courseInfo.courseName);
       $('#title').attr('href', `${courseEndpoint}/d2l/home/${courseInfo.courseId}`);
-      let image = data.OrgUnit.ImageUrl || "https://d2q79iu7y748jz.cloudfront.net/s/_logo/2b6d922805d2214befee400b8bb5de7f.png";
+      let image = "https://d2q79iu7y748jz.cloudfront.net/s/_logo/2b6d922805d2214befee400b8bb5de7f.png";
+      if( data && data.OrgUnit ) {
+        image = (data.OrgUnit.ImageUrl)?data.OrgUnit.ImageUrl:image;
+      }
       // $('#courseHeader').css('background-image', `url("${image}")`);
       $('#courseHeader').css('width', window.innerWidth);
       $('#courseHeader').css('height', window.innerWidth/3);

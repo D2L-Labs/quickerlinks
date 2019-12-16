@@ -73,7 +73,7 @@ function initTrie() {
     });
   }
 
-  chrome.omnibox.setDefaultSuggestion({description:`<dim>QuickerLinks - getting you to where you are going, quicker than quick.</dim>`});
+  chrome.omnibox.setDefaultSuggestion({description:`<dim>Getting you to where you are going, quicker than quick.</dim>`});
 }
 
 chrome.omnibox.onInputStarted.addListener(function() {

@@ -30,6 +30,26 @@ body {
   color:#565a5c;
 }
 
+#homeHeader .settingsIcon {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+#homeHeader .settingsIcon > button,
+#homeHeader .settingsIcon > a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+}
+
+#homeHeader .settingsIcon > a:hover,
+#homeHeader .settingsIcon > a:focus {
+  text-decoration: none;
+}
+
 .ellipses {
   opacity: 0;
   position: absolute;

@@ -16,8 +16,11 @@
 		<div >
 			<div id="homeHeader" class="container-fluid homeHeader">
 				<div class="pull-right settingsIcon">
-					<a href="settings.html">
-						<span class="glyphicon glyphicon-cog headerGlyphicons">
+					<button id="toggleSearch" class="searchButton" type="button" aria-label="Search courses" title="Search courses" aria-controls="courseSearch" aria-expanded="false">
+						<span class="glyphicon glyphicon-search headerGlyphicons" aria-hidden="true"></span>
+					</button>
+					<a href="settings.html" aria-label="Settings" title="Settings">
+						<span class="glyphicon glyphicon-cog headerGlyphicons" aria-hidden="true">
 						</span>
 					</a>
 				</div>
@@ -27,6 +30,14 @@
 			</div>
 			<div class="container-fluid">
 				<div tabindex="1"></div>
+				<div id="courseSearch" class="courseSearch" hidden>
+					<label class="sr-only" for="courseSearchInput">Search courses</label>
+					<input id="courseSearchInput" class="form-control" type="search" placeholder="Search courses" autocomplete="off" aria-controls="home">
+					<button id="cancelSearch" class="searchButton cancelSearch" type="button" aria-label="Cancel search" title="Cancel search">
+						<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>
+					</button>
+				</div>
+				<p id="searchStatus" role="status" hidden>No matching courses.</p>
 				<div id="home"></div>
 			</div>
 		</div>

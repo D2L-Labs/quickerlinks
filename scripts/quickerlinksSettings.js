@@ -11,6 +11,14 @@ const quickerLinksSettings = {
       name: `${quickerLinksSettingsPrefix}.pinnedOnly`,
       default: 'true',
     },
+  courseSearchVisible: {
+      name: `${quickerLinksSettingsPrefix}.courseSearchVisible`,
+      default: 'false',
+    },
+  courseSearchQuery: {
+      name: `${quickerLinksSettingsPrefix}.courseSearchQuery`,
+      default: '',
+    },
   dropboxPastDays: {
       name: `${quickerLinksSettingsPrefix}.dropboxPastDays`,
       default: 3,

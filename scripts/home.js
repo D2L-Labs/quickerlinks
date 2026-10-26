@@ -1,6 +1,8 @@
 let homeEndpoint = localStorage[quickerLinksSettings.domain.name];
+let courseColumns = [];
 
 document.addEventListener('DOMContentLoaded', function() {
+  initializeCourseSearch();
   if (!homeEndpoint) {
     inferEndpointFromTabs();
   } else {
@@ -9,6 +11,54 @@ document.addEventListener('DOMContentLoaded', function() {
   
   checkIfAdmin();
 });
+
+function initializeCourseSearch() {
+  const search = document.querySelector('#courseSearch');
+  const input = document.querySelector('#courseSearchInput');
+  const toggle = document.querySelector('#toggleSearch');
+  search.hidden = localStorage[quickerLinksSettings.courseSearchVisible.name] !== 'true';
+  input.value = localStorage[quickerLinksSettings.courseSearchQuery.name] || '';
+  toggle.setAttribute('aria-expanded', String(!search.hidden));
+
+  function updateSearch() {
+    localStorage[quickerLinksSettings.courseSearchVisible.name] = String(!search.hidden);
+    localStorage[quickerLinksSettings.courseSearchQuery.name] = input.value;
+    toggle.setAttribute('aria-expanded', String(!search.hidden));
+    filterCourses();
+  }
+
+  toggle.addEventListener('click', () => {
+    search.hidden = !search.hidden;
+    updateSearch();
+    if (!search.hidden) input.focus();
+  });
+  input.addEventListener('input', updateSearch);
+  document.querySelector('#cancelSearch').addEventListener('click', () => {
+    input.value = '';
+    search.hidden = true;
+    updateSearch();
+    toggle.focus();
+  });
+}
+
+function filterCourses() {
+  if (!courseColumns.length) return;
+  const home = document.querySelector('#home');
+  const search = document.querySelector('#courseSearch');
+  const query = search.hidden ? '' : document.querySelector('#courseSearchInput').value.toLowerCase();
+  const matches = courseColumns.filter(course => course.name.includes(query));
+  home.replaceChildren();
+  let row;
+  matches.forEach((course, index) => {
+    if (index % 2 === 0) {
+      row = document.createElement('div');
+      row.className = 'row';
+      home.appendChild(row);
+    }
+    row.appendChild(course.column);
+  });
+  document.querySelector('#searchStatus').hidden = matches.length !== 0;
+}
 
 function inferEndpointFromTabs() {
   let getWindows = new Promise( function(resolve, reject) {
@@ -134,7 +184,14 @@ function loadCourses() {
                       console.log(error)
                         console.log('There was an error when retrieving the data')
                     });
-            })
+            });
+            courseColumns = Array.from(home.querySelectorAll('.col-xs-6'))
+              .filter(column => column.querySelector('.name'))
+              .map(column => ({
+                column,
+                name: column.querySelector('.name').textContent.toLowerCase(),
+              }));
+            filterCourses();
               })
               .catch(function () {
                 home.innerHTML = `<div class="panel panel-info"><div class="panel-heading">Not logged in</div><div class="panel-body"><a href="${homeEndpoint}/d2l/login" target="_blank">Click here</a> to go to your Brightspace site and log in.</div></div>`;

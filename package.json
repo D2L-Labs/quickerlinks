@@ -1,0 +1,11 @@
+{
+  "name": "quickerlinks",
+  "private": true,
+  "scripts": {
+    "check:skills": "node utils/check-skills.mjs",
+    "test:skills": "node --test utils/check-skills.test.mjs"
+  },
+  "devDependencies": {
+    "yaml": "^2.9.1"
+  }
+}

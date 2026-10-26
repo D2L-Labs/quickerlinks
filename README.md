@@ -24,3 +24,14 @@ You can report issues in the GitHub repo, but you should have no expectation tha
 ## Contributing ##
 
 You can submit a pull request, but you should have not expectation that it will be reviewed or accepted.
+
+### Check Agent Skills ###
+
+Run `npm install` to install the development dependencies. The browser extension does not load these packages.
+
+- Run `npm run check:skills` to check all repository skills.
+- Run `npm run check:skills -- verify-ui` to check one skill by name.
+- Pass a skill directory or a path to a `SKILL.md` file to check a specific location.
+- Run `npm test` to test the validator.
+
+The validator checks YAML syntax, required metadata, optional field types, the directory name, and body content. It returns exit code 1 if any check fails. It does not assess the quality of the skill instructions.

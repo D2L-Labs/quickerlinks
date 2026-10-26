@@ -1,3 +1,7 @@
+body {
+	max-width: 100%;
+}
+
 .row {
 	padding:10px;
 }
@@ -33,6 +37,10 @@
 }
 
 .courseImage {
+	width: 100%;
+	height: auto;
+	aspect-ratio: 210 / 87;
+	object-fit: cover;
 	border-top-right-radius: 7px;
 	border-top-left-radius: 7px
 }

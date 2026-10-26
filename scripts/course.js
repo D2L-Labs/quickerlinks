@@ -1,52 +1,43 @@
 let courseEndpoint = localStorage[quickerLinksSettings.domain.name];
 let topicsCache = null;
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', function() {
   // location = new URL(window.location);
   let nameStart = window.location.search.indexOf('name');
   let courseStart = window.location.search.indexOf('ou')
   let courseId = window.location.search.substring(courseStart + 3, nameStart - 1);
   let courseName = window.location.search.substring(nameStart + 5).replace(new RegExp('%20', 'g'), ' ')
   let courseInfo = {courseId, courseName}
-  $(".dropdown-item").attr('href', `${courseEndpoint}/d2l/home/${courseId}`)
+  document.querySelectorAll('.dropdown-item').forEach(link => {
+    link.href = `${courseEndpoint}/d2l/home/${courseId}`;
+  });
   loadCourse(courseInfo)
-  $('#back').click(function() {
+  document.querySelector('#back').addEventListener('click', function() {
     window.location.href = 'home.html'
   });
 });
 
 
 function loadCourse(courseInfo) {
-  $.ajax({
-    url: `${courseEndpoint}/d2l/api/lp/${lpVersion}/enrollments/myenrollments/${courseInfo.courseId}`,
-    dataType: "json",
-    success: function(data) {
-      $('#title').html(courseInfo.courseName);
-      $('#title').attr('href', `${courseEndpoint}/d2l/home/${courseInfo.courseId}`);
+  fetchJson(`${courseEndpoint}/d2l/api/lp/${lpVersion}/enrollments/myenrollments/${courseInfo.courseId}`)
+    .then(function(data) {
+      const title = document.querySelector('#title');
+      title.textContent = courseInfo.courseName;
+      title.href = `${courseEndpoint}/d2l/home/${courseInfo.courseId}`;
       let image = "https://d2q79iu7y748jz.cloudfront.net/s/_logo/2b6d922805d2214befee400b8bb5de7f.png";
       if( data && data.OrgUnit ) {
         image = (data.OrgUnit.ImageUrl)?data.OrgUnit.ImageUrl:image;
       }
-      // $('#courseHeader').css('background-image', `url("${image}")`);
-      $('#courseHeader').css('width', window.innerWidth);
-      $('#courseHeader').css('height', window.innerWidth/3);
-      $('#courseHeader').css('background', `linear-gradient(rgba(0, 0, 0, 0), #000 250px), url("${image}")`);
-      $('#courseHeader').css('background-position', 'center');
+      const header = document.querySelector('#courseHeader');
+      header.style.background = `linear-gradient(rgba(0, 0, 0, 0), #000 250px), url("${image}")`;
+      header.style.backgroundPosition = 'center';
       loadUpdates(courseInfo);
       loadSubmissions(courseInfo);
       loadContent(courseInfo);
-      $('#courseHeader').hover( () => {
-          $(this).parent().parent().find('.ellipses').addClass('ellipsesHover');
-        }, 
-        () =>{
-          $(this).parent().parent().find('.ellipses').removeClass('ellipsesHover');
-        }
-      );
-    },
-    error: function (e) {
+    })
+    .catch(function () {
       console.log("Error: Not a valid URL.");
-    }
-  });
+    });
 }
 
 function loadContent(courseInfo) {
@@ -76,30 +67,31 @@ function loadContent(courseInfo) {
 
 
 function displayCachedTopics(courseInfo) {
-  $('#recentContent').append('<div id="recentView"></div>')
+  const recentContent = document.querySelector('#recentContent');
+  recentContent.insertAdjacentHTML('beforeend', '<div id="recentView"></div>');
+  const recentView = recentContent.querySelector('#recentView');
   if (topicsCache[courseInfo.courseId]) { // If there are any available links for this org unit
-    $('#recentView').append('<div id="recentViewList" class="list-group"></div>');
+    recentView.insertAdjacentHTML('beforeend', '<div id="recentViewList" class="list-group"></div>');
     topicsCache[courseInfo.courseId].forEach(function (historyItem) {
-      $('#recentViewList').append(`<a href="${historyItem.url}" class="list-group-item" target="_blank">${historyItem.title}</a>`);
+      document.querySelector('#recentViewList').insertAdjacentHTML('beforeend', `<a href="${historyItem.url}" class="list-group-item" target="_blank">${historyItem.title}</a>`);
     })
   } else { // else display no recently visited topics message
-    $('#recentContent').children('#recentView').append(`<div>No recently viewed links from this course</div>`);
+    recentView.insertAdjacentHTML('beforeend', '<div>No recently viewed links from this course</div>');
   }
 
-  $('#recentContent').children('#recentView').append(`<div class="gotoContent"><a href="${courseEndpoint}/d2l/le/content/${courseInfo.courseId}/Home" target="_blank" >Go to content</a></div>`);
+  recentView.insertAdjacentHTML('beforeend', `<div class="gotoContent"><a href="${courseEndpoint}/d2l/le/content/${courseInfo.courseId}/Home" target="_blank" >Go to content</a></div>`);
 }
 
 function loadUpdates(courseInfo) {
-  $.ajax({
-    url: `${courseEndpoint}/d2l/api/le/${leVersion}/${courseInfo.courseId}/updates/myUpdates`,
-    dataType: "json",
-    success: function(data) {
+  fetchJson(`${courseEndpoint}/d2l/api/le/${leVersion}/${courseInfo.courseId}/updates/myUpdates`)
+    .then(function(data) {
       let badgeNums = [data.UnreadDiscussions, data.UnreadAssignmentFeedback, data.UnattemptedQuizzes]
-      $('#course').prepend(`<ul id="badges" class="nav nav-pills"></ul>`);
-      $('#badges').append(`<li><a id="badge-0" class="badges" href="${courseEndpoint}/d2l/le/${courseInfo.courseId}/discussions/List" target="_blank" >Discussions </a></li>`);
-      $('#badges').append(`<li><a id="badge-1" class="badges" href="${courseEndpoint}/d2l/lms/dropbox/dropbox.d2l?ou=${courseInfo.courseId}" target="_blank" >Assignments </a></li>`);
-      $('#badges').append(`<li><a id="badge-2" class="badges" href="${courseEndpoint}/d2l/lms/quizzing/user/quizzes_list.d2l?ou=${courseInfo.courseId}" target="_blank" >Quizzes </a></li>`);
-      $('#badges').append(`<li><a id="badge-3" class="badges" href="${courseEndpoint}/d2l/lms/grades/my_grades/main.d2l?ou=${courseInfo.courseId}" target="_blank" >Grades</a></li>`);
+      document.querySelector('#course').insertAdjacentHTML('afterbegin', '<ul id="badges" class="nav nav-pills"></ul>');
+      const badges = document.querySelector('#badges');
+      badges.insertAdjacentHTML('beforeend', `<li><a id="badge-0" class="badges" href="${courseEndpoint}/d2l/le/${courseInfo.courseId}/discussions/List" target="_blank" >Discussions </a></li>`);
+      badges.insertAdjacentHTML('beforeend', `<li><a id="badge-1" class="badges" href="${courseEndpoint}/d2l/lms/dropbox/dropbox.d2l?ou=${courseInfo.courseId}" target="_blank" >Assignments </a></li>`);
+      badges.insertAdjacentHTML('beforeend', `<li><a id="badge-2" class="badges" href="${courseEndpoint}/d2l/lms/quizzing/user/quizzes_list.d2l?ou=${courseInfo.courseId}" target="_blank" >Quizzes </a></li>`);
+      badges.insertAdjacentHTML('beforeend', `<li><a id="badge-3" class="badges" href="${courseEndpoint}/d2l/lms/grades/my_grades/main.d2l?ou=${courseInfo.courseId}" target="_blank" >Grades</a></li>`);
 
       let updateCount, updateDisplay;
       for (let i=0; i<badgeNums.length; i++) {
@@ -107,44 +99,41 @@ function loadUpdates(courseInfo) {
         updateDisplay = '';
         if (updateCount > 0) {
           updateDisplay = (updateCount <= 99) ? updateCount : '99+';
-          $(`#badge-${i}`).append(`<span class="notification">${updateDisplay}</span>`)
+          document.querySelector(`#badge-${i}`).insertAdjacentHTML('beforeend', `<span class="notification">${updateDisplay}</span>`);
         }
       }
-    },
-    error: function (e) {
+    })
+    .catch(function () {
       console.log("Error: Not a valid URL.");
-    }
-  });
+    });
 }
 
 function loadSubmissions(courseInfo) {
-  $.ajax({
-    url: `${courseEndpoint}/d2l/api/le/${leVersion}/${courseInfo.courseId}/dropbox/folders/`,
-    dataType: "json",
-    success: function(folders) {
+  fetchJson(`${courseEndpoint}/d2l/api/le/${leVersion}/${courseInfo.courseId}/dropbox/folders/`)
+    .then(function(folders) {
       let foundAssignments = false;
-      $('#assignments').append('<div id="assignmentsView"></div>');
+      document.querySelector('#assignments').insertAdjacentHTML('beforeend', '<div id="assignmentsView"></div>');
+      const assignmentsView = document.querySelector('#assignmentsView');
       for (let i=0; i<folders.length; i++) {
         //null duedates excluded
         if (folders[i].DueDate) {
           let diff = diffDate(new Date(), new Date(folders[i].DueDate))
           if (diff < localStorage["quickerLinks.dropboxFutureDays"] && diff > -1*localStorage["quickerLinks.dropboxPastDays"]) {
             if(!foundAssignments) {
-              $('#assignmentsView').append('<div id="assignmentsViewList" class="list-group"></div>');
+              assignmentsView.insertAdjacentHTML('beforeend', '<div id="assignmentsViewList" class="list-group"></div>');
             }
-            $('#assignmentsViewList').append(`<a class="list-group-item" href="${courseEndpoint}/d2l/lms/dropbox/user/folder_submit_files.d2l?db=${folders[i].Id}&ou=${courseInfo.courseId}" target="_blank">${folders[i].Name}</a>`)
+            document.querySelector('#assignmentsViewList').insertAdjacentHTML('beforeend', `<a class="list-group-item" href="${courseEndpoint}/d2l/lms/dropbox/user/folder_submit_files.d2l?db=${folders[i].Id}&ou=${courseInfo.courseId}" target="_blank">${folders[i].Name}</a>`);
             foundAssignments = true;
           }
         }
       }
       if (!foundAssignments) {
-        $('#assignmentsView').append(`<div>No assignments found in specified date range.</div>`)
+        assignmentsView.insertAdjacentHTML('beforeend', '<div>No assignments found in specified date range.</div>');
       }
-    },
-    error: function (e) {
+    })
+    .catch(function () {
       console.log("Error: Not a valid URL.");
-    }
-  });
+    });
 }
 
 function diffDate(date1, date2) {

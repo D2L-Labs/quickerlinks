@@ -1,69 +1,83 @@
 
 
+let alertTimer;
+let alertAnimation;
+
 function myAlertBottom(){
-  $(".myAlert-bottom").fadeIn("slow");
-  setTimeout( () => {
-    $(".myAlert-bottom").fadeOut("slow"); 
+  const alert = document.querySelector('.myAlert-bottom');
+  clearTimeout(alertTimer);
+  if (alertAnimation) alertAnimation.cancel();
+  alert.hidden = false;
+  alertAnimation = alert.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 600 });
+  alertTimer = setTimeout(() => {
+    alertAnimation = alert.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 600 });
+    alertAnimation.onfinish = () => { alert.hidden = true; };
   }, 2000);
 }
 
 function displayAdminMessage() {
-  $('#isAdminMsg').remove();
+  document.querySelector('#isAdminMsg')?.remove();
   let isAdmin = localStorage[quickerLinksSettings.isAdmin.name] === 'true';
   if( isAdmin ) {
-    $('#domain').append('<span id="isAdminMsg" class="text-info">You are an admin for this site.</span>');
+    document.querySelector('#domain').insertAdjacentHTML('beforeend', '<span id="isAdminMsg" class="text-info">You are an admin for this site.</span>');
   }
 }
 
 function displayErrorMessage() {
-  $('#isAdminMsg').remove();
-  $('#domain').append('<span id="isAdminMsg" class="text-danger">Error with domain specified.</span>');
+  document.querySelector('#isAdminMsg')?.remove();
+  document.querySelector('#domain').insertAdjacentHTML('beforeend', '<span id="isAdminMsg" class="text-danger">Error with domain specified.</span>');
 }
 
 
 function saveDomain() {
     myAlertBottom();
-    let domain = $('#domainInput').val();
+    let domain = document.querySelector('#domainInput').value;
     if (domain && !domain.startsWith('http')) {
       domain = "https://" + domain;
     }
     localStorage[quickerLinksSettings.domain.name] = domain;
     localStorage[quickerLinksSettings.isAdmin.name] = undefined;
-    $('#domainButton').removeClass('btn-primary');
+    document.querySelector('#domainButton').classList.remove('btn-primary');
 
     checkIfAdmin( displayAdminMessage, displayErrorMessage );
 }
 
-$(document).ready( () => {
+document.addEventListener('DOMContentLoaded', () => {
+  const domainInput = document.querySelector('#domainInput');
+  const domainButton = document.querySelector('#domainButton');
+  const pinnedCourses = document.querySelector('#pinnedCourses');
+  const pastRangeInput = document.querySelector('#pastRangeInput');
+  const futureRangeInput = document.querySelector('#futureRangeInput');
   if (localStorage[quickerLinksSettings.domain.name]) {
-    $('#domainInput').attr('value', localStorage[quickerLinksSettings.domain.name])
+    domainInput.value = localStorage[quickerLinksSettings.domain.name];
   } else {
-    $('#domainInput').attr('placeholder', "No domain set.")
+    domainInput.placeholder = 'No domain set.';
   }
-  $('#domainInput').keypress( (e) => {
-    let key = e.which;
-    if( key == 13 ) {
+  domainInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
       saveDomain();
-      $('#domainInput').blur();
-    } else {
-      $('#domainButton').addClass('btn-primary');
+      domainInput.blur();
     }
   });
-  $('#domainButton').click( saveDomain );
+  domainInput.addEventListener('input', () => domainButton.classList.add('btn-primary'));
+  domainButton.addEventListener('click', saveDomain);
 
   displayAdminMessage();  
 
   let pinnedOnly = (localStorage[quickerLinksSettings.pinnedOnly.name] === 'true');
   if (pinnedOnly) {
-    $('#pinnedCourses').prop('checked', true);
+    pinnedCourses.checked = true;
   }  else {
-    $('#allCourses').prop('checked', true);
+    document.querySelector('#allCourses').checked = true;
   }
   
-  $('input[name=coursesVisibility]').click( () => {
-    let newPinnedOnly = $('#pinnedCourses').prop('checked');
-    localStorage[quickerLinksSettings.pinnedOnly.name] = newPinnedOnly;
-    myAlertBottom();
+  document.querySelectorAll('input[name=coursesVisibility]').forEach(input => {
+    input.addEventListener('change', () => {
+      let newPinnedOnly = pinnedCourses.checked;
+      localStorage[quickerLinksSettings.pinnedOnly.name] = newPinnedOnly;
+      myAlertBottom();
+    });
   });
 
   let pastDays = "", futureDays = "";
@@ -76,19 +90,23 @@ $(document).ready( () => {
       pastDays = i + ' ' + pastDays;
       futureDays = pastDays;
     }
-    $('#pastRangeInput').append(`<option id="past${i}" value="${i}">${pastDays}</option>`);
+    pastRangeInput.add(new Option(pastDays, i));
     if (i !== 0) {
-      $('#futureRangeInput').append(`<option id="future${i}" value="${i}">${futureDays}</option>`);
+      futureRangeInput.add(new Option(futureDays, i));
     }
   }
-  $(`#pastRangeInput #past${localStorage[quickerLinksSettings.dropboxPastDays.name]}`).attr('selected', 'selected');
-  $(`#futureRangeInput #future${localStorage[quickerLinksSettings.dropboxFutureDays.name]}`).attr('selected', 'selected');
-  $('#pastRangeInput').change( () => {
-    localStorage[quickerLinksSettings.dropboxPastDays.name] = $('#pastRangeInput').val() || localStorage[quickerLinksSettings.dropboxPastDays.name];
+  if (localStorage[quickerLinksSettings.dropboxPastDays.name] !== undefined) {
+    pastRangeInput.value = localStorage[quickerLinksSettings.dropboxPastDays.name];
+  }
+  if (localStorage[quickerLinksSettings.dropboxFutureDays.name] !== undefined) {
+    futureRangeInput.value = localStorage[quickerLinksSettings.dropboxFutureDays.name];
+  }
+  pastRangeInput.addEventListener('change', () => {
+    localStorage[quickerLinksSettings.dropboxPastDays.name] = pastRangeInput.value || localStorage[quickerLinksSettings.dropboxPastDays.name];
     myAlertBottom();
   });
-  $('#futureRangeInput').change( () => {
-    localStorage[quickerLinksSettings.dropboxFutureDays.name] = $('#futureRangeInput').val() || localStorage[quickerLinksSettings.dropboxFutureDays.name];
+  futureRangeInput.addEventListener('change', () => {
+    localStorage[quickerLinksSettings.dropboxFutureDays.name] = futureRangeInput.value || localStorage[quickerLinksSettings.dropboxFutureDays.name];
     myAlertBottom();
   });
 });

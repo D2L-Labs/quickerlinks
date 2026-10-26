@@ -35,14 +35,20 @@ for( setting in quickerLinksSettings ) {
   }
 }
 
+async function fetchJson(url) {
+  const response = await fetch(url, { credentials: 'include' });
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+  }
+  return response.json();
+}
+
 function checkIfAdmin(callbackSuccess, callbackError) {
   let settingsEndpoint = localStorage[quickerLinksSettings.domain.name];
   let isAdminCurrent = localStorage[quickerLinksSettings.isAdmin.name];
   if( isAdminCurrent === undefined || isAdminCurrent === 'undefined' ) {
-    $.ajax({
-      url: `${settingsEndpoint}/d2l/api/lp/${lpVersion}/enrollments/myenrollments/?OrgUnitTypeId=1`,
-      dataType: 'json',
-      success: ( myenrollments ) => {
+    return fetchJson(`${settingsEndpoint}/d2l/api/lp/${lpVersion}/enrollments/myenrollments/?OrgUnitTypeId=1`)
+      .then((myenrollments) => {
         localStorage[quickerLinksSettings.orgId.name] = myenrollments.Items[0].OrgUnit.Id;
         let isAdmin = false;
         if (myenrollments.Items[0].Access.LISRoles.includes("urn:lti:instrole:ims/lis/Administrator")) {
@@ -52,13 +58,12 @@ function checkIfAdmin(callbackSuccess, callbackError) {
         if(callbackSuccess) {
           callbackSuccess();
         }
-      },
-      error: () => {
+      })
+      .catch(() => {
         localStorage[quickerLinksSettings.isAdmin.name] = false;
         if(callbackError) {
           callbackError();
         }
-      }
-    });
+      });
   }
 }

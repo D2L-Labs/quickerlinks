@@ -5,11 +5,9 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <script src="scripts/jquery-3.2.1.min.js"></script>
-  <script src="scripts/popper.js"></script>
-  <script src="scripts/bootstrap.min.js"></script>
-  <script src="scripts/quickerLinksSettings.js"></script>
-  <script src="scripts/course.js"></script>
+  <script defer src="scripts/quickerlinksSettings.js"></script>
+  <script defer src="scripts/dropdowns.js"></script>
+  <script defer src="scripts/course.js"></script>
   <link rel="stylesheet" href="styles/quickerlinks.css">
   <link rel="stylesheet" href="styles/course.css">
   <link rel="stylesheet" href="styles/bootstrap.min.css">
@@ -18,8 +16,8 @@
   <div id="courseHeader" class="courseHeader">
     <div class="spaceBetween">
       <a id="back"><span class="glyphicon glyphicon-menu-left headerGlyphicons"></span></a>
-      <div class="dropdown show">
-        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown">
+      <div class="dropdown">
+        <button class="dropdown-toggle" type="button" aria-label="Course links" aria-haspopup="true" aria-expanded="false">
           <div class="ellipses">
             <svg viewBox="0 0 18 18" preserveAspectRatio="xMidYMid meet" focusable="false" style="pointer-events: none; display: block; width: 80%; height: 80%;">
               <g class="style-scope d2l-icon">
@@ -28,7 +26,7 @@
               </g>
             </svg>
           </div>
-        </a>
+        </button>
         <ul class="dropdown-menu dropdown-menu-right">
           <li><a class="dropdown-item" href="#" target="_blank">Go to course</a></li>
         </ul>

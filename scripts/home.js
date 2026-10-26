@@ -1,6 +1,6 @@
 let homeEndpoint = localStorage[quickerLinksSettings.domain.name];
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', function() {
   if (!homeEndpoint) {
     inferEndpointFromTabs();
   } else {
@@ -35,27 +35,21 @@ function inferEndpointFromTabs() {
         localStorage[quickerLinksSettings.domain.name] = 'https://' + tabs[0].url.split('/')[2]
       }
       homeEndpoint = localStorage[quickerLinksSettings.domain.name];
-      $.ajax({
-        url: `${homeEndpoint}/d2l/api/lp/${lpVersion}/users/whoami`,
-        success: (response) => {
+      fetchJson(`${homeEndpoint}/d2l/api/lp/${lpVersion}/users/whoami`)
+        .then(() => {
           loadCourses();
-        },
-        error: () => {
-          $('#home').html(`<div class="panel panel-warning"><div class="panel-heading">Cannot find Brightspace</div><div class="panel-body">No domain has been set yet. <a href="settings.html">Click here</a> to change your settings, or log in to your Brightspace site in a new tab.</div></div>`);
-        }
-      });
+        })
+        .catch(() => {
+          document.querySelector('#home').innerHTML = `<div class="panel panel-warning"><div class="panel-heading">Cannot find Brightspace</div><div class="panel-body">No domain has been set yet. <a href="settings.html">Click here</a> to change your settings, or log in to your Brightspace site in a new tab.</div></div>`;
+        });
     });
 }
 
 function loadCourses() {
-    $('#title').attr('href', `${homeEndpoint}/d2l/home`);
-    $.ajax({
-      url: `${homeEndpoint}/d2l/api/lp/${lpVersion}/enrollments/myenrollments/?OrgUnitTypeId=1,3&sortBy=-PinDate`,
-      dataType: "json",
-      success: (data) => {
+    const home = document.querySelector('#home');
+    fetchJson(`${homeEndpoint}/d2l/api/lp/${lpVersion}/enrollments/myenrollments/?OrgUnitTypeId=1,3&sortBy=-PinDate`)
+      .then((data) => {
         let courses = data.Items;
-        let orgName = courses.filter(course => course.OrgUnit.Type.Id === 1)[0].OrgUnit.Name;
-        $('#title').html(orgName);
 
         let displayCourses;
         
@@ -76,21 +70,22 @@ function loadCourses() {
             panelBody = 'You are not enrolled in any courses.';
           } 
 
-          $('#home').html(`<div class="panel panel-success"><div class="panel-heading">${panelHeading}</div><div class="panel-body">${panelBody}</div></div>`);
+          home.innerHTML = `<div class="panel panel-success"><div class="panel-heading">${panelHeading}</div><div class="panel-body">${panelBody}</div></div>`;
         }
         
         let numRows = displayCourses.length / 2 + 1;
 
             // Two courses take up one row.
             for (var i = 0; i < numRows; i++) {
-                $("#home").append("<div class=\"row\"></div>")
+                home.insertAdjacentHTML('beforeend', '<div class="row"></div>');
             }
             // Appends two cols of width 6 to every row.
-            $(".row").append("<div class=\"col-xs-6\"> </div>")
-            $(".row").append("<div class=\"col-xs-6\"> </div>")
+            home.querySelectorAll('.row').forEach(row => {
+              row.insertAdjacentHTML('beforeend', '<div class="col-xs-6"> </div><div class="col-xs-6"> </div>');
+            });
 
             // Append course to every column
-            $(".col-xs-6").each(function (index) {
+            home.querySelectorAll('.col-xs-6').forEach(function (column, index) {
                 if (index >= displayCourses.length) return;
 
                 let currentCourse = displayCourses[index].OrgUnit;
@@ -102,9 +97,9 @@ function loadCourses() {
                     // Set to default
                     image = "https://d2q79iu7y748jz.cloudfront.net/s/_logo/2b6d922805d2214befee400b8bb5de7f.png"
                 }
-                $(this).append(`<div class="courseInfo">
-                                    <div class="dropdown show">
-                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                column.insertAdjacentHTML('beforeend', `<div class="courseInfo">
+                          <div class="dropdown">
+                            <button class="dropdown-toggle" type="button" aria-label="Course links" aria-haspopup="true" aria-expanded="false">
                                         <div class="ellipses">
                                             <svg viewBox="0 0 18 18" preserveAspectRatio="xMidYMid meet" focusable="false" style="pointer-events: none; display: block; width: 80%; height: 80%;">
                                             <g class="style-scope d2l-icon">
@@ -113,7 +108,7 @@ function loadCourses() {
                                             </g>
                                             </svg>
                                         </div>
-                                        </a>
+                                        </button>
                                         <ul class="dropdown-menu menu">
                                             <li><a class="dropdown-item" href="${homeEndpoint}/d2l/home/${id}" target="_blank">Go to course</a></li>
                                         </ul>
@@ -125,32 +120,24 @@ function loadCourses() {
                                         <a href="course.html?ou=${id}&name=${title}" id="${id}" class="name">${title}</a>
                                     </div>
                                 </div>`);
-                let updateParent = $(this).children('div').children('.extLink');
-                $.ajax({
-                    url: `${homeEndpoint}/d2l/api/le/${leVersion}/${id}/updates/myUpdates`,
-                    success: function (d) {
-                        let updatesCount = d.UnreadDiscussions + d.UnattemptedQuizzes + d.UnreadAssignmentFeedback
+                let updateParent = column.querySelector('.extLink');
+                fetchJson(`${homeEndpoint}/d2l/api/le/${leVersion}/${id}/updates/myUpdates`)
+                  .then(function (data) {
+                    let updatesCount = data.UnreadDiscussions + data.UnattemptedQuizzes + data.UnreadAssignmentFeedback
                         if (updatesCount) {
                             if (updatesCount > 99) updatesCount = '99+'
 
-                            $(updateParent).append(`<span class="notification">${updatesCount}</span>`)
+                            updateParent.insertAdjacentHTML('beforeend', `<span class="notification">${updatesCount}</span>`);
                         }
-                    },
-                    error: function (e) {
-                         console.log(e)
+                    })
+                    .catch(function (error) {
+                      console.log(error)
                         console.log('There was an error when retrieving the data')
-                    }
-                });
+                    });
             })
-            $('.courseImage').hover(function() {
-                $(this).parent().parent().find('.ellipses').addClass('ellipsesHover');
-            }, function() {
-                $(this).parent().parent().find('.ellipses').removeClass('ellipsesHover');
-            });
-        },
-        error: function (e) {
-            $('#home').html(`<div class="panel panel-info"><div class="panel-heading">Not logged in</div><div class="panel-body"><a href="${homeEndpoint}/d2l/login" target="_blank">Click here</a> to go to your Brightspace site and log in.</div></div>`);
+              })
+              .catch(function () {
+                home.innerHTML = `<div class="panel panel-info"><div class="panel-heading">Not logged in</div><div class="panel-body"><a href="${homeEndpoint}/d2l/login" target="_blank">Click here</a> to go to your Brightspace site and log in.</div></div>`;
             console.log("Error: Not a valid URL.");
-        }
-    });
+              });
 }
